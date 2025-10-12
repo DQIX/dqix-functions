@@ -897,6 +897,14 @@ main:
       description: |-
         r0: is disabled
         return: (bool) original interrupt state
+    - name: AsyncProcessTerminationEntryPoint
+      address:
+        jpn: 0x20C917C
+      description: |-
+        Handles asynchronous process termination and switching
+        
+        No argument
+        No returns
     - name: TransforToArm7
       address:
         jpn: 0x20C9320
