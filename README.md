@@ -17,8 +17,9 @@ The dqix-functions repository was created to address the following issues:
 - By importing this repository into Ghidra, simply viewing a function’s name can help infer its behavior, reducing the need to inspect the function’s implementation directly  
 
 # Why resymgen?
-- There are limited legal methods for sharing function information, and other approaches may not merge cleanly or could unintentionally lead to noncompliant distribution.
+- There are limited legal methods for sharing function information, and could unintentionally lead to noncompliant distribution.
 - For this reason, resymgen was chosen as the format for sharing function data.
+- Also, resymgen comes with a formatter that allows for clean merging.
 
 # Contributing 
 - Create a fork of this repository   
