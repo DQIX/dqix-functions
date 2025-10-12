@@ -130,7 +130,7 @@ ATとBTは同じシード値を共有し、3dsでは初期シードの幅が非�
 ### CT
 
 It is the third random number in the game and is used to randomize combat actions.
-An initial seed is generated at the start of each battle and is 32 bits wide, making it difficult to predict.
+An initial seed is generated at the start of each battle and is 48 bits wide, making it difficult to predict.
 It is also used as a camera-related random number.
 
 will be updated with the following expression
