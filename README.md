@@ -7,7 +7,33 @@ It includes some functions for division and decimal point processing, and by sha
 I'm not going to do a complete analysis.
 
 See the issue for instructions on how to import.
-https://github.com/DaisukeDaisukeTeam/dq9Functions/issues/1
+https://github.com/DaisukeDaisukeTeam/dq9Functions/issues/2
+
+
+# motivation
+The dqix-functions repository was created to address the following issues:  
+- Ghidra provides only limited and unintuitive methods for exporting information such as function names  
+- Due to unexpected failures or other incidents, the analysis environment may need to be replaced frequently, which can result in the loss of previously identified functions  
+- By importing this repository into Ghidra, simply viewing a function’s name can help infer its behavior, reducing the need to inspect the function’s implementation directly  
+
+
+# Contributing 
+- Create a fork of this repository   
+- Configure Git on your computer and clone the forked repository   
+- Edit the symbol files in YAML format using your preferred text editor, such as VS Code, Sublime Text 4, or PhpStorm (paid)   
+
+> [!TIP]
+> (Optional, for Windows users) Download resymgen from the link below to check for syntax errors and reformat symbol files automatically    
+> https://drive.google.com/file/d/1ISqVxmTNlTDi5T2dlgCUzkvo760OGkcZ/view?usp=sharing  
+> Syntax errors can be checked with the following commands:  
+```
+resymgen.exe fmt .\symbols\arm9_ram.yml
+resymgen.exe fmt .\symbols\arm9_field.yml
+resymgen.exe fmt .\symbols\arm9_battle.yml
+```
+
+- Commit your changes  
+- Open a pull request to request review and merging
 
 # Glossary
 
