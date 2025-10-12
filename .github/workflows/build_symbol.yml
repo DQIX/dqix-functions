@@ -12,11 +12,9 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-   
     - name: Cache
       id: rust-cache
       uses: actions/cache@v4
@@ -47,6 +45,7 @@ jobs:
         resymgen gen --sort --output-dir output/battle symbols/arm9_battle.yml
         resymgen gen --sort --output-dir output/field symbols/arm9_field.yml
         resymgen gen --sort --output-dir output/ram symbols/arm9_ram.yml
+        resymgen gen --sort --output-dir output/overlay31 symbols/arm9_overlay31.yml
     - name: zipping
       working-directory: dq9Functions
       run: |
@@ -67,21 +66,3 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           prerelease: ${{ endsWith(github.ref_name, '-preview') }}
-
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: jpn
-        path: ${{ github.workspace }}/dq9Functions/symbol_jpn.zip 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: eur
-        path: ${{ github.workspace }}/dq9Functions/symbol_eur.zip
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: usa
-        path: ${{ github.workspace }}/dq9Functions/symbol_usa.zip
-          
-    

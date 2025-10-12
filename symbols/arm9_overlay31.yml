@@ -1,0 +1,100 @@
+main:
+  versions:
+    - jpn
+  address:
+    jpn: 0x2200940
+  length:
+    jpn: 0x4CC40
+  description: overlay31 memory
+  functions:
+    - name: ley_31_os_sendmessage
+      address:
+        jpn: 0x2204264
+      description: unknown
+    - name: ley_31_os_receivemessage
+      address:
+        jpn: 0x22042FC
+      description: |-
+        unknown
+        
+        (*data) 0x224d6a4
+    - name: lay_31_CreateHTTPTestContent
+      address:
+        jpn: 0x22184FC
+      description: |-
+        unknown
+        
+        unknown arguments
+    - name: lay_31_HttpMainHandler
+      address:
+        jpn: 0x2218878
+      description: |-
+        The main handler that instructs arm7 to perform http processing
+        
+        unknown arguments
+    - name: lay_31_ALLOC_result
+      address:
+        jpn: 0x2219218
+      description: |-
+        Dynamically allocate memory and store it in a specific memory location
+        
+        r0: param_1
+        r1: Unknown buffer
+        r2: *name
+        r3: *value
+        return: (bool) is_success
+    - name: lay_31_ParseHttpHeader
+      address:
+        jpn: 0x221936C
+      description: |-
+        Attempts to parse http headers, possibly allocating dynamic memory
+        
+        unknown arguments
+    - name: lay_d_31_read_heap_and_base64_decode
+      address:
+        jpn: 0x2219664
+      description: |-
+        Decode base64
+        
+        r0: array
+        r1: key name
+        r2: Reserved stack output, If 0, returns the length of the data.
+        r3: Maximum number of characters expected (before decoding)
+        return: maybe addr
+        
+        Unknown argument
+    - name: lay_31_ConntestMainHandler
+      address:
+        jpn: 0x2219AA0
+      description: |-
+        Perform a connection test
+        
+        unknown arguments
+    - name: lay_31_DLC_ConnectionMainHandler
+      address:
+        jpn: 0x2219AA0
+      description: |-
+        ?
+        unknown arguments
+    - name: lay_d_31_base64_decode_4byte
+      address:
+        jpn: 0x221B44C
+      description: |-
+        Decode base64
+        
+        r0: data
+        r1: strlen
+        r2: Reserved stack output
+        r3: Maximum number of characters expected (before decoding)
+        return: bool true = 1
+        
+        Unknown argument
+  data:
+    - name: AT_LCG_Location
+      address:
+        jpn: 0x20EEE90
+        eur: 0x20EEF30
+        usa: 0x20EEF30
+      length:
+        jpn: 0x4
+        eur: 0x4
