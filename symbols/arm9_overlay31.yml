@@ -25,6 +25,14 @@ main:
         unknown
         
         unknown arguments
+    - name: makeHttpContents
+      address:
+        jpn: 0x22184FC
+      description: |-
+        Generates the header for the HTTP request
+        
+        Unknown argument
+        return: bool
     - name: lay_31_HttpMainHandler
       address:
         jpn: 0x2218878
@@ -32,6 +40,13 @@ main:
         The main handler that instructs arm7 to perform http processing
         
         unknown arguments
+    - name: lay_d_31_Free_Network_Heap
+      address:
+        jpn: 0x2218B94
+      description: |-
+        Attempts to free dynamic memory for networking
+        
+        Unknown argument
     - name: lay_31_ALLOC_result
       address:
         jpn: 0x2219218
@@ -70,12 +85,21 @@ main:
         Perform a connection test
         
         unknown arguments
-    - name: lay_31_DLC_ConnectionMainHandler
+    - name: lay_d_31_DLC_Connection_Handler
       address:
         jpn: 0x2219AA0
       description: |-
-        ?
-        unknown arguments
+        Handles the connection to the DQVC(dlc). This function runs entirely asynchronously
+        
+        Unknown argument
+    - name: lay_d_31_Handler_Fault_With_Status
+      address:
+        jpn: 0x221A9B4
+      description: |-
+        The handler writes that the operation failed due to the reason in r0
+        
+        r0: region
+        unknown return
     - name: lay_d_31_base64_decode_4byte
       address:
         jpn: 0x221B44C
