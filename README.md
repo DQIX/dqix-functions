@@ -1,4 +1,4 @@
-# dq9Functions
+# dqix-functions
 
 dq9 function name sharing project using [resymgen](https://github.com/UsernameFodder/pmdsky-debug/blob/master/docs/resymgen.md) that comes with [pmdsky-debug](https://github.com/UsernameFodder/pmdsky-debug) project
 Currently only a handful of functions from the jp version are provided
@@ -34,6 +34,8 @@ resymgen.exe fmt .\symbols\arm9_battle.yml
 
 - Commit your changes  
 - Open a pull request to request review and merging
+
+# 
 
 # Glossary
 
