@@ -18,6 +18,30 @@ main:
         unknown
         
         (*data) 0x224d6a4
+    - name: lay_d_31_DWC_SetAuthServer
+      address:
+        jpn: 0x2212430
+      description: |-
+        DWC_SetAuthServer
+        
+        r0: (DWCInetAuthType type)
+        return: void
+    - name: lay_d_31_DWC_Auth_SetCustomNas
+      address:
+        jpn: 0x2216F88
+      description: |-
+        lay_d_31_DWC_Auth_SetCustomNas
+        
+        r0: (const char * nasaddr)
+        return: void
+    - name: lay_d_31_DWC_Auth_http_Main
+      address:
+        jpn: 0x2217370
+      description: |-
+        lay_d_31_DWC_Auth_http_Main
+        
+        Unknown argument
+        unknown return
     - name: lay_31_CreateHTTPTestContent
       address:
         jpn: 0x22184FC

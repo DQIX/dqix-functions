@@ -897,6 +897,10 @@ main:
       description: |-
         r0: is disabled
         return: (bool) original interrupt state
+    - name: SwitchProcesses
+      address:
+        jpn: 0x20C8E60
+      description: unknown
     - name: AsyncProcessTerminationEntryPoint
       address:
         jpn: 0x20C917C
@@ -905,6 +909,10 @@ main:
         
         No argument
         No returns
+    - name: SwitchProcessesHigherHandler
+      address:
+        jpn: 0x20C9230
+      description: unknown
     - name: TransforToArm7
       address:
         jpn: 0x20C9320
