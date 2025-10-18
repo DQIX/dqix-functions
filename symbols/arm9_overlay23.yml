@@ -1,0 +1,34 @@
+main:
+  versions:
+    - jpn
+  address:
+    jpn: 0x2200940
+  length:
+    jpn: 0x4CC40
+  description: overlay31 memory
+  functions:
+    - name: lay_d_23_Handler
+      address:
+        jpn: 0x21F5188
+      description: unknown
+    - name: lay_d_23_decode_A
+      address:
+        jpn: 0x21F52C4
+      description: unknown
+    - name: lay_d_23_decode_Auction
+      address:
+        jpn: 0x21F54AC
+      description: unknown
+    - name: lay_d_23_CheckChecksum
+      address:
+        jpn: 0x21F5918
+      description: unknown
+  data:
+    - name: AT_LCG_Location
+      address:
+        jpn: 0x20EEE90
+        eur: 0x20EEF30
+        usa: 0x20EEF30
+      length:
+        jpn: 0x4
+        eur: 0x4

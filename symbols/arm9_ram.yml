@@ -459,6 +459,28 @@ main:
         r0: IEEE 754 floating-point numbers
         r1: IEEE 754 floating-point numbers
         return: (float) r0 - r1
+    - name: int64_DivisionAndConvertFloat32_1
+      address:
+        jpn: 0x200CBF0
+      description: |-
+        Left / Right
+        
+        r0: (long) dividend low 32 bits
+        r1: (long) dividend high 32 bits
+        r2: (long) divisor low 32 bits
+        r3: (long) divisor high 32 bits
+        return: r0: (float) (Left / Right) (including fractions)
+    - name: int64_DivisionAndConvertFloat32_2
+      address:
+        jpn: 0x200CDAC
+      description: |-
+        Left / Right
+        
+        r0: (long) dividend low 32 bits
+        r1: (long) dividend high 32 bits
+        r2: (long) divisor low 32 bits
+        r3: (long) divisor high 32 bits
+        return: r0: (float) (Left / Right) (including fractions)
     - name: int32Division1
       address:
         jpn: 0x200CE08

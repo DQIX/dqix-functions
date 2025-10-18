@@ -89,6 +89,15 @@ main:
         Attempts to parse http headers, possibly allocating dynamic memory
         
         unknown arguments
+    - name: lay_d_31_readResultHeapArrayByKeyName
+      address:
+        jpn: 0x221960C
+      description: |-
+        read result Heap by key name
+        
+        r0: *data
+        r1: keyname
+        result: *Values
     - name: lay_d_31_read_heap_and_base64_decode
       address:
         jpn: 0x2219664
@@ -124,6 +133,15 @@ main:
         
         r0: region
         unknown return
+    - name: lay_d_31_DecodeDateFormats
+      address:
+        jpn: 0x221A9F8
+      description: |-
+        r0: *data
+        r1: ?
+        r2: ?
+        r3: ?
+        result: Void?
     - name: lay_d_31_base64_decode_4byte
       address:
         jpn: 0x221B44C
@@ -135,8 +153,15 @@ main:
         r2: Reserved stack output
         r3: Maximum number of characters expected (before decoding)
         return: bool true = 1
+    - name: lay_d_31_MakeDls1ServerBody
+      address:
+        jpn: 0x223F5C0
+      description: |-
+        Make a request to the dls1 server
+        Unknown arguments
+        r2: mode(base64)
         
-        Unknown argument
+        return: bool
   data:
     - name: AT_LCG_Location
       address:

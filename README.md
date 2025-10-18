@@ -39,7 +39,25 @@ resymgen.exe fmt .\symbols\arm9_battle.yml
 - Commit your changes  
 - Open a pull request to request review and merging
 
-# 
+# Known Overlays
+
+```
+overlay 0: Player Controls  in field, battle code? etc?
+overlay 1: Event Movie Progression
+2: ?
+overlay 3: Player Control in Villages?
+overlay 9: maybe ending
+overlay 14: Monster encyclopedia
+overlay 15: Character Viewer?
+overlay 16: movie engine(Independent)
+overlay 17 maybe Main screen engine, Battle, Event loop?
+overlay 19: Save Data Rescue?
+overlay 20: logo
+overlay 23: DLC Data Handler
+overlay 31: wi-fi setting and nitro wi-fi api
+32: ?
+33: ?
+```
 
 # Glossary
 
