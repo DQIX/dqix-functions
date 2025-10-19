@@ -18,6 +18,25 @@ main:
         unknown
         
         (*data) 0x224d6a4
+    - name: lay_d_31_RC4_Generate_ksa_master_key
+      address:
+        jpn: 0x2212088
+      description: |-
+        rc4 algorithm
+        
+        r0: stack 256 byte
+        r1: *key
+        r2: len
+    - name: lay_d_31_RC4_Main_Encryption_Algorithm
+      address:
+        jpn: 0x2212118
+      description: |-
+        rc4 algorithm
+        
+        r0: master key of stack 256 byte
+        r1: *data
+        r2: len
+        r3: *output
     - name: lay_d_31_DWC_SetAuthServer
       address:
         jpn: 0x2212430

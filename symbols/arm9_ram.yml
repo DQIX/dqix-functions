@@ -470,7 +470,7 @@ main:
         r2: (long) divisor low 32 bits
         r3: (long) divisor high 32 bits
         return: r0: (float) (Left / Right) (including fractions)
-    - name: int64_DivisionAndConvertFloat32_2
+    - name: int64_DivisionAndGetMods
       address:
         jpn: 0x200CDAC
       description: |-
@@ -480,7 +480,7 @@ main:
         r1: (long) dividend high 32 bits
         r2: (long) divisor low 32 bits
         r3: (long) divisor high 32 bits
-        return: r0: (float) (Left / Right) (including fractions)
+        return: r0: (float) (Left mod Right)
     - name: int32Division1
       address:
         jpn: 0x200CE08

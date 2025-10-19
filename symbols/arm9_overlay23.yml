@@ -15,10 +15,31 @@ main:
       address:
         jpn: 0x21F52C4
       description: unknown
-    - name: lay_d_23_decode_Auction
+    - name: lay_d_23_InfoDLCHandler
+      address:
+        jpn: 0x21F52C4
+      description: |-
+        r0: pam1
+        r1: checksum
+        r2: std_malloc 0xc800
+    - name: lay_d_23_MegDLCHandler
+      address:
+        jpn: 0x21F5344
+      description: |-
+        r0: pam1
+        r1: checksum
+        r2: std_malloc 0xc800
+    - name: lay_d_23_AuctionDLCHandler
       address:
         jpn: 0x21F54AC
       description: unknown
+    - name: lay_d_23_QuestDLCHandler
+      address:
+        jpn: 0x21F5694
+      description: |-
+        r0: pam1
+        r1: checksum
+        r2: std_malloc 0xc800
     - name: lay_d_23_CheckChecksum
       address:
         jpn: 0x21F5918
