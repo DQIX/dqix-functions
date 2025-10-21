@@ -616,7 +616,7 @@ main:
       description: |-
         pam = sp
         {
-          pam1 + 0x0: BinarySearch Start count
+          pam1 + 0x0: instructions total count
           pam1 + 0x4: instructions data start address
           pam1 + 0x8: instruction override address
           pam1 + 0xc: data original start ptr
