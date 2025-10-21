@@ -610,6 +610,34 @@ main:
         
          No arguments
         return: 0x020FDAAC
+    - name: InterpreterForBinaryProgrammingLanguages
+      address:
+        jpn: 0x2030308
+      description: |-
+        pam = sp
+        {
+          pam1 + 0x0: BinarySearch Start count
+          pam1 + 0x4: instructions data start address
+          pam1 + 0x8: instruction override address
+          pam1 + 0xc: data original start ptr
+          pam1 + 0x10: program length
+          pam1 + 0x14: data original start ptr
+          pam1 + 0x24: program PC
+          pam1 + 0x28: program Node Processed
+        }
+    - name: alignAfterCeilDivBy4
+      address:
+        jpn: 0x2030508
+      description: Divide b by 4 and round the result up ((ceil($i/4) + 6) & ~3);
+    - name: BinarySearchInStructure
+      address:
+        jpn: 0x203055C
+      description: |-
+        binary search
+        
+        r0: Base Pointer
+        r1: id
+        r2: (*code) getid()
     - name: ATRandInt
       address:
         jpn: 0x2031EA8
