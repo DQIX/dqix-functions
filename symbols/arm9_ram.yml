@@ -840,6 +840,14 @@ main:
         
         r0: IEEE 754 floating-point number
         return: (int) (input + 0.5)
+    - name: ReadNARCHeader
+      address:
+        jpn: 0x2076378
+      description: |-
+        Reads the specified file from the NARC file system
+        
+        unknown argument
+        unknown returns
     - name: addItemToInventoryHandler
       address:
         jpn: 0x207DD68
