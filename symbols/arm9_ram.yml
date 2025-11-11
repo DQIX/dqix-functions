@@ -95,11 +95,9 @@ main:
       address:
         jpn: 0x20040A0
       description: |-
-        The main handler that instructs arm7 to perform http processing
-        
-        r0: *target
-        r1: *needed
-        return: How much the string deviates from the expected value. 0 if there is no deviation
+        r0: *string
+        r1: *hack
+        r2: len
     - name: strpos
       address:
         jpn: 0x2004158
@@ -896,6 +894,18 @@ main:
       description: |-
         Write the companion data
         FUN_0209cb88
+    - name: ChangeFieldBGM
+      address:
+        jpn: 0x209E12C
+      description: |-
+        r0: 0x021098AC
+        r1: id
+    - name: ChangeBattleBGM
+      address:
+        jpn: 0x209E1F8
+      description: |-
+        r0: 0x021098AC
+        r1: id
     - name: AddItemToInventory
       address:
         jpn: 0x20A26D4
@@ -1060,7 +1070,6 @@ main:
     - name: initMonsterData
       address:
         jpn: 0x21677AC
-      description: Unknown for now
   data:
     - name: AT_LCG_Location
       address:
