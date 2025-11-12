@@ -1013,6 +1013,15 @@ main:
         
         r0: start ptr
         r1: length
+    - name: NDSExceptionHandlerMain
+      address:
+        jpn: 0x20CA578
+      description: |-
+        Handling data aborts
+        
+        Handle data abort
+        If 0x02111228 is not 0x00(Normally it should be 0x00), jump to that address
+        If not, it goes into an infinite loop
     - name: GenerateInitialSeed
       address:
         jpn: 0x20CA828
