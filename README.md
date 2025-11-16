@@ -44,8 +44,9 @@ resymgen.exe fmt .\symbols\arm9_battle.yml
 ```
 overlay 0: Player Controls  in field, battle code? etc?
 overlay 1: Event Movie Progression
-2: ?
+overlay 2: maybe Standard menu????
 overlay 3: Player Control in Villages?
+overlay 8: Stella(sandy) Interrupt Window
 overlay 9: maybe ending
 overlay 14: Monster encyclopedia
 overlay 15: Character Viewer?
