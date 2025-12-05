@@ -1079,6 +1079,14 @@ main:
     - name: initMonsterData
       address:
         jpn: 0x21677AC
+    - name: NDSExceptionHandlerEntryPoint
+      address:
+        jpn: 0xFFFF0010
+      description: |-
+        Handling data aborts
+        
+        Handle data abort
+        LR = Criminal's Instructions
   data:
     - name: AT_LCG_Location
       address:
