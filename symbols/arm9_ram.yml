@@ -1005,14 +1005,64 @@ main:
         Back up register
         
         r0: backup buffer
-    - name: ClearDataCache
+    - name: ClearInstructionCacheByAddrNoSynchronization
+      address:
+        jpn: 0x20C9D84
+      description: |-
+        Clears the instruction cache in 0x20 byte increments starting from the specified address
+        This function is not synchronous
+        
+        r0: start ptr
+        r1: length
+    - name: ClearDataCacheByAddrNoSynchronization
+      address:
+        jpn: 0x20C9DA0
+      description: |-
+        020c9dbc
+        Clears the data cache in 20-byte increments starting from the specified address
+        This function is not data synchronous
+        
+        r0: start ptr
+        r1: length
+    - name: ClearDataCacheByAddr
       address:
         jpn: 0x20C9DBC
       description: |-
         020c9dbc
+        Clears the data cache in 20-byte increments starting from the specified address
         
         r0: start ptr
         r1: length
+    - name: doDataCacheSynchronization
+      address:
+        jpn: 0x20C9DE0
+      description: |-
+        Synchronize the data cache
+        
+        no argc
+        no returns
+    - name: MakeUnusableInstructionCacheByAddr
+      address:
+        jpn: 0x20C9DEC
+      description: |-
+        Marks the entire instruction cache as invalid
+        
+        no argc
+        no returns
+    - name: ClearInstructionCacheByAddr
+      address:
+        jpn: 0x20C9DF8
+      description: |-
+        Clears the instruction cache in 0x20 byte increments starting from the specified address
+        
+        r0: start ptr
+        r1: length
+    - name: WaitVCountIs0
+      address:
+        jpn: 0x20C9E14
+      description: |-
+        no argc
+        no returns
     - name: NDSExceptionHandlerMain
       address:
         jpn: 0x20CA578
