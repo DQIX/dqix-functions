@@ -1005,12 +1005,11 @@ main:
         Back up register
         
         r0: backup buffer
-    - name: ClearInstructionCacheByAddrNoSynchronization
+    - name: MakeUnusableDataCacheByAddr
       address:
         jpn: 0x20C9D84
       description: |-
-        Clears the instruction cache in 0x20 byte increments starting from the specified address
-        This function is not synchronous
+        Marks the entire instruction cache as invalid
         
         r0: start ptr
         r1: length
@@ -1129,6 +1128,16 @@ main:
     - name: initMonsterData
       address:
         jpn: 0x21677AC
+    - name: DSProtectDetectedCallbacks2
+      address:
+        jpn: 0x020D8614
+      description: |-
+        This will notify the game that the dsProtect check failed
+        If the ds protect check succeeds, this function will not be called at all
+        Attempting to bypass this callback function will result in an immediate crash and destroy the ds
+        
+        r0: is Detected
+        return(s): 0x80 etc
     - name: NDSExceptionHandlerEntryPoint
       address:
         jpn: 0xFFFF0010
