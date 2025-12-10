@@ -55,6 +55,7 @@ overlay 17 maybe Main screen engine, Battle, Event loop?
 overlay 19: Save Data Rescue?
 overlay 20: logo
 overlay 23: DLC Data Handler
+overley 29: Maybe DS protect
 overlay 31: wi-fi setting and nitro wi-fi api
 32: ?
 33: ?
