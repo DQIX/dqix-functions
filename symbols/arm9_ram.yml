@@ -1138,14 +1138,14 @@ main:
         
         r0: is Detected
         return(s): 0x80 etc
-    - name: NDSExceptionHandlerEntryPoint
-      address:
-        jpn: 0xFFFF0010
-      description: |-
-        Handling data aborts
-        
-        Handle data abort
-        LR = Criminal's Instructions
+#    - name: NDSExceptionHandlerEntryPoint
+#      address:
+#        jpn: 0xFFFF0010
+#      description: |-
+#        Handling data aborts
+#
+#        Handle data abort
+#        LR = Criminal's Instructions
   data:
     - name: AT_LCG_Location
       address:
