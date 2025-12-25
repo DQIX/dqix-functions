@@ -1125,12 +1125,9 @@ main:
         r0: form ptr
         r0: to ptr
         r1: length
-    - name: initMonsterData
-      address:
-        jpn: 0x21677AC
     - name: DSProtectDetectedCallbacks2
       address:
-        jpn: 0x020D8614
+        jpn: 0x20D8614
       description: |-
         This will notify the game that the dsProtect check failed
         If the ds protect check succeeds, this function will not be called at all
@@ -1138,14 +1135,9 @@ main:
         
         r0: is Detected
         return(s): 0x80 etc
-#    - name: NDSExceptionHandlerEntryPoint
-#      address:
-#        jpn: 0xFFFF0010
-#      description: |-
-#        Handling data aborts
-#
-#        Handle data abort
-#        LR = Criminal's Instructions
+    - name: initMonsterData
+      address:
+        jpn: 0x21677AC
   data:
     - name: AT_LCG_Location
       address:
