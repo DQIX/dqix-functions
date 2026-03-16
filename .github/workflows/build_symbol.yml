@@ -54,7 +54,7 @@ jobs:
         find output -type f -name "*_eur*" -exec zip symbol_eur.zip {} +
         find output -type f -name "*_usa*" -exec zip symbol_usa.zip {} +
     - name: Update latest branch release
-      uses: ncipollo/release-action@v1.20.0
+      uses: ncipollo/release-action@v1.21.0
       with:
           artifacts: |
             ${{ github.workspace }}/dq9Functions/symbol_jpn.zip
