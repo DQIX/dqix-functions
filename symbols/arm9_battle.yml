@@ -445,6 +445,13 @@ main:
         
         arguments are not yet understood
         return are not yet understood
+    - name: MPAbsorption
+      address:
+        jpn: 0x2158B28
+      description: |-
+        MP Absorption
+        FUN_overlay_d_00__02158b28
+        02158d18: In the case of the enemy
     - name: ProcessReduceEnemyBuffs
       address:
         jpn: 0x2159ABC
@@ -453,6 +460,15 @@ main:
         
         arguments are not yet understood
         return: 1 if enemy cannot move, 0 if enemy can move
+    - name: ReduceMP
+      address:
+        jpn: 0x215B8A4
+      description: |-
+        Reduce MP
+        FUN_overlay_d_00__0215b8a4
+        
+        r2: Amount to reduce
+        return: ?
     - name: ProcessHPHoover
       address:
         jpn: 0x215B8EC
