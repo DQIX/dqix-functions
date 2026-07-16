@@ -1005,6 +1005,13 @@ main:
         Back up register
         
         r0: backup buffer
+    - name: std_LaunchProcess
+      address:
+        jpn: 0x20C984C
+      description: |-
+        This is the entry point for forking the process.
+        r0: Unknown structure pointer addr
+        returns: Never Return
     - name: MakeUnusableDataCacheByAddr
       address:
         jpn: 0x20C9D84
