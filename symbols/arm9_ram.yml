@@ -878,6 +878,83 @@ main:
         *4: *chain item Pickup Flags 0x02306680 + 0x6c[]
         
         return: 0x02108F28
+    - name: parseItemPickupDefinitionInstruction
+      address:
+        jpn: 0x208E9D4
+      description: |-
+        Handles binary-language opcode 0x66 from an Fxxflditem.bin NARC member and appends one 0x70-byte pickup node to the chain.
+        The node next pointer is at +0x6C. The handler stores area index in node word 0, item ID in its low 16 bits, respawn/point metadata in node +0x04, and up to eight fixed-point Vector3 records from node +0x0C.
+        For example, F02flditem.bin set 0 decodes to area 5, item 0x5605, custom respawn count 30, point count 3, and points (-43,0,-11), (-46,0,-10), (-46,0,-17). The coordinates become -43*4096 = 0xFFFD5000 etc. at runtime.
+        
+        r0: pointer to the interpreter's typed argument array
+        returns: 1
+    - name: parseItemPickupBiasInstruction
+      address:
+        jpn: 0x208EBD0
+      description: |-
+        Handles fldbias.bin binary-language opcode 0x67.
+        Arg0 is pickup mode 0..7. The remaining arguments are eight triples of respawn count, respawn group, and point count. The handler selects one triple using dynamicBase+0x5A7A and stores it in the four-byte mode-default table.
+        For the Japanese items.dst selector 3, mode 0 becomes respawn 360/group 1/3 points, mode 1 becomes 60/3/4, mode 2 becomes 120/4/5, and mode 3 becomes 180/5/6.
+        
+        r0: pointer to the interpreter's typed argument array
+        returns: 1 after writing a matching selector, otherwise 0
+    - name: loadItemPickupDefinitions
+      address:
+        jpn: 0x208EE30
+      description: |-
+        Loads and executes static pickup definitions for a field.
+        It reads NitroFS data/scenario/flditem.pac, formats the member name as %sflditem.bin, executes fldbias.bin once, clears the old pickup chain, and interprets the selected Fxx member. It also uses data/bin/izmitm.bin for the special area 98/99 path.
+        For example, field code F02 selects NARC member F02flditem.bin, which creates area 5/item 0x5605 and area 6/item 0x564C nodes.
+        
+        r0: item pickup structure returned by getItemPickupStructureAddr
+        r1: field code string used to build the Fxxflditem.bin member name
+    - name: getItemPickupRespawnSchedulerAddr
+      address:
+        jpn: 0x208F2F8
+      description: |-
+        Returns the shared pickup respawn scheduler at 0x02108F64.
+        The scheduler byte at +0 is the current area index in the 0..99 sweep and float +0x04 is the elapsed-second phase. For example, a live speed-1 sample while waiting at area 0 had phase 30.855423 seconds.
+        
+        returns: 0x02108F64 in the Japanese version
+    - name: updateItemPickupRespawnTimers
+      address:
+        jpn: 0x208F588
+      description: |-
+        Updates one entry of the global pickup respawn timer table at dynamicBase+0x5A7C+areaIndex*4.
+        It adds elapsedMilliseconds/1000.0 to the shared scheduler float at r0+4. At the 60.0-second threshold it clears the accumulator, then advances byte r0+0 through area indexes 0..99 and decrements each configured timer word low 9 bits. At zero it selects new point bits and reloads low9 from the encoded respawn count.
+        For example, area 5 uses timer 0x020F8E68. A pickup sets low9 to 30, and the confirmed decrement write at 0x0208F91C changes 29 to 28. Area 18 reloads to 360 and was observed as 359 immediately after the next decrement.
+        The pickup operation does not reset the shared scheduler accumulator or sweep index, so the first decrement after pickup can occur before a full 60 seconds.
+        
+        r0: pointer to the shared eight-byte timer scheduler; byte +0 is the current area sweep index and float +0x04 is accumulated elapsed seconds
+    - name: materializeItemPickupChain
+      address:
+        jpn: 0x208FA7C
+      description: |-
+        Resolves static pickup nodes against the global timer table during field entry.
+        For each node, areaIndex is extracted from node word 0 and node +0x08 is set to dynamicBase+0x5A7C+areaIndex*4. Timer availability bits are copied into node +0x04, then active point objects are built.
+        For example, F02's first two nodes resolve to area 5 timer 0x020F8E68 and area 6 timer 0x020F8E6C. This function is called from overlay_d_17:0219FBF4; pressing A to collect an already-loaded pickup does not call it.
+        
+        r0: field pickup manager/work object
+        r1: field allocator used for active point objects
+    - name: parseMapListFieldRecord
+      address:
+        jpn: 0x209B32C
+      description: |-
+        Handles data/map/maplist9.bin binary-language opcode 0x67 and appends one 16-byte field record.
+        Arg0 is map ID. Arg4 is a type-0 string-pool reference copied as a field code of at most seven bytes.
+        For example, map ID 0x4E22 decodes to field code F02 and the name 西セントシュタイン; map ID 0x4E27 decodes to F07 and アユルダーマとう.
+        
+        r0: pointer to the interpreter's typed argument array
+        returns: true when the required field-code string exists and the record is appended
+    - name: loadMapList9
+      address:
+        jpn: 0x209B5F8
+      description: |-
+        Loads NitroFS data/map/maplist9.bin and executes it with the map-list handler table at 0x020F168C.
+        The Japanese file contains 1038 instructions and 1010 opcode-0x67 field records. Joining those records to flditem member names maps every ordinary pickup field code to exactly one map ID.
+        For example, F02 joins to map 0x4E22 and areas 5/6, while F07 joins to map 0x4E27 and areas 18/19/20.
+        
+        r0: destination map-list owner/work object saved while the interpreter runs
     - name: WriteEncounterId
       address:
         jpn: 0x209CC14
@@ -953,6 +1030,62 @@ main:
         
         r0: overlayid
         return: Whether the operation completed successfully
+    - name: validateDQ9SaveHeader
+      address:
+        jpn: 0x20AB164
+      description: |-
+        Reads and validates the 0x14-byte save header record at backup offset 0x10 for copy 0 or 0x8010 for copy 1.
+        Validation checks the record checksum and the save011 identifier. Failure records a copy-specific error state at dynamic base +0x5A68.
+        
+        r0: destination buffer for the 0x14-byte header record
+        r1: nonzero selects copy 1, zero selects copy 0
+        returns: 1 when checksum and identifier are valid, otherwise 0
+    - name: loadItemPickupTimerSaveBlock
+      address:
+        jpn: 0x20AB74C
+      description: |-
+        Restores the 0x194-byte pickup timer save block.
+        Byte 0 is copied to dynamic base +0x5A7A as the fldbias selector. The 400 bytes at block +4 are copied to dynamic base +0x5A7C as 100 u32 global timer words.
+        For example, block +0x18 is area 5 and block +0x4C is area 18. Their slot-relative save offsets are 0x345C and 0x3490 because the block begins at slot +0x3444.
+        
+        r0: pointer to the pickup save block beginning at slot-relative 0x3444
+        returns: 1
+    - name: serializeDQ9SaveBody
+      address:
+        jpn: 0x20ABB08
+      description: |-
+        Serializes the DQ9 save body into fixed slot-relative blocks.
+        The pickup block is written at 0x3444: selector byte at 0x3444, three alignment bytes, then timer[100] at 0x3448 through 0x35D7.
+        It stores a u32 payload checksum at 0x84 covering 0x6F5C bytes from 0x88 through 0x6FE3. Area word offset is 0x3448 + areaIndex*4; examples are area 5 at 0x345C, area 18 at 0x3490, and areas 98/99 at 0x35D0/0x35D4.
+        
+        r0: save operation state/work object
+        r1: caller work/checksum pointer used while fixed destination offsets are materialized
+        r2: save option flags
+        r3: special-path flag; nonzero serializes the special subset/fields
+        returns: 1 on serialization completion
+    - name: writeDQ9SaveDualSlot
+      address:
+        jpn: 0x20AC914
+      description: |-
+        Asynchronous save writer state machine for the two 0x8000-byte save regions.
+        It writes 0x6FE4 bytes of body beginning at backup offset 0x10. With r3=0 it writes the same body to 0x10 and then 0x8010. With r3=1 it writes only to 0x8010.
+        Eight inspected callers pass r3=0. overlay_d_02:0216A960 is the inspected special caller and passes r3=1.
+        
+        r0: save writer state object; byte 0 is the asynchronous stage
+        r1: serializer work/checksum pointer
+        r2: save option flags
+        r3: zero writes both copies; nonzero writes copy 1 only
+        returns: 1 when the operation finishes or fails terminally, 0 while pending
+    - name: loadDQ9SaveSlot
+      address:
+        jpn: 0x20ACAEC
+      description: |-
+        Loads and validates one DQ9 save slot, then restores runtime subsystems from fixed block offsets.
+        The pickup block source is slot-relative 0x3444 and is passed to loadItemPickupTimerSaveBlock. A zero slot selector reads the payload/checksum beginning at 0x84; nonzero selects the corresponding copy-1 offsets.
+        
+        r2: zero selects copy 0, nonzero selects copy 1
+        r3: nonzero performs validation without committing all restored runtime state
+        returns: true when header, payload checksum, and restore path succeed
     - name: EnableInterrupts
       address:
         jpn: 0x20C8788
@@ -1154,6 +1287,14 @@ main:
       length:
         jpn: 0x4
         eur: 0x4
+    - name: ItemPickupGlobalTimerTable
+      address:
+        jpn: 0x20F8E54
+      length:
+        jpn: 0x190
+      description: |-
+        Sparse 100-entry u32 pickup timer table addressed as base+areaIndex*4.
+        Low 9 bits are remaining counts and one count is 60.0 game seconds. For example, area 5 is 0x020F8E68 and reloads to 30; area 18 is 0x020F8E9C and reloads to 360.
     - name: BT_LCG_location
       address:
         jpn: 0x2108D20
@@ -1162,6 +1303,28 @@ main:
       length:
         jpn: 0x8
         eur: 0x8
+    - name: ItemPickupStructure
+      address:
+        jpn: 0x2108F28
+      length:
+        jpn: 0x10
+      description: Pickup-chain owner returned by getItemPickupStructureAddr. Pointer +0x04 is the first 0x70-byte pickup node and the node next pointer is at +0x6C.
+    - name: ItemPickupModeDefaults
+      address:
+        jpn: 0x2108F38
+      length:
+        jpn: 0x20
+      description: |-
+        Eight four-byte records selected from fldbias.bin. Each record is u16 respawn count, u8 respawn group, u8 point count.
+        For Japanese selector 3, mode 0 is 360/1/3 and mode 3 is 180/5/6.
+    - name: ItemPickupRespawnScheduler
+      address:
+        jpn: 0x2108F64
+      length:
+        jpn: 0x8
+      description: |-
+        Shared scheduler used by updateItemPickupRespawnTimers.
+        Byte +0 is the current area index in the 0..99 timer sweep and float +0x04 is elapsed seconds toward the 60.0-second threshold. Pickup collection does not reset either field.
     - name: CT_LCG_location
       address:
         jpn: 0x2385F0C
