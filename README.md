@@ -62,6 +62,45 @@ overlay 31: wi-fi setting and nitro wi-fi api
 33: ?
 ```
 
+Thank you Eakeys
+```
+00 0 battle
+01 0 event
+02 0 topmenu
+03 0 shisetsu
+04 0 menucallback
+05 0 equipmenu
+06 0 renkin
+07 1 debug
+08 1 jourecode
+09 1 charamake2
+10 1 pitfall
+11 1 menusys
+12 1 prof
+13 1 skillup
+14 1 subjugation
+15 2 charaview
+16 2 movieview
+17 2 gamemain
+18 2 mapjump
+19 2 readerror
+20 2 title
+21 2 charamake
+22 3 sub_debug
+23 3 sub_menu
+24 3 sub_battle
+25 3 sub_round
+26 3 sub_command
+27 3 sub_staffroll
+28 3 sub_hoge
+29 3 sub_makescn
+30 3 sub_libmb
+31 4 wifi
+32 4 sound
+33 5 bgload1
+34 5 bgload2
+```
+
 # Glossary
 
 ## LCG
