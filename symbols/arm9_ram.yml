@@ -916,12 +916,58 @@ main:
         The scheduler byte at +0 is the current area index in the 0..99 sweep and float +0x04 is the elapsed-second phase. For example, a live speed-1 sample while waiting at area 0 had phase 30.855423 seconds.
         
         returns: 0x02108F64 in the Japanese version
+    - name: dispatchItemPickupTimerInitialization
+      address:
+        jpn: 0x208F320
+      description: |-
+        Dispatches pickup timer initialization using the selector byte at dynamicBase+0x5A7A (0x020F8E52 in the Japanese version).
+        
+        Algorithm:
+        - Selectors 0 through 7 take the normal-save-load path and call applyItemPickupNormalLoadInitialization.
+        - Selector 8 takes the separate new-initialization path, which calls UpdateAT; the normal-load path does not call UpdateAT.
+        - This branch and call path were matched between the main:0208F320 listing and repeated menu.dst runtime breakpoints.
+        - Changing the selector byte to every value 0 through 7, with immediate write readback, produced the same normal-load transform with zero mismatches across all 100 timer words.
+        
+        Parameters:
+        - None observed; reads the pickup selector and timer table through the dynamic global base.
+        
+        Returns:
+        - No meaningful return value observed.
+        
+        Side effects:
+        - Dispatches initialization of ItemPickupGlobalTimerTable.
+    - name: applyItemPickupNormalLoadInitialization
+      address:
+        jpn: 0x208F514
+      description: |-
+        Applies the normal-save-load initialization to the sparse 100-entry ItemPickupGlobalTimerTable at dynamicBase+0x5A7C.
+        
+        Algorithm:
+        - For each timer word with bit 31 set and a nonzero availability mask in bits 17 through 24, clear low remaining bits 0 through 8 and the availability mask.
+        - Store duration step bits 25 through 28 multiplied by 3 into the remaining field.
+        - The exact unsigned transform is ((word & 0xFE01FE00) | ((((word >>> 25) & 0xF) * 3) & 0x1FF)).
+        - Preserve words outside the condition.
+        - main:0208F55C contains add r12,r12,r12,lsl #1 and main:0208F56C stores the result.
+        - With menu.dst, area 1 changed from 0xA21E281E to 0xA2002803 while availability-zero area 99 remained 0xA4002238.
+        - Repeated entry/return captures and selector 0 through 7 tests matched the transform for all 100 words with zero mismatches.
+        
+        Parameters:
+        - None observed; reads and writes ItemPickupGlobalTimerTable through the dynamic global base.
+        
+        Returns:
+        - No meaningful return value observed.
+        
+        Side effects:
+        - Initializes eligible saved pickup timers to 3 through 36 remaining counts.
+        - Clears their saved availability bits.
     - name: updateItemPickupRespawnTimers
       address:
         jpn: 0x208F588
       description: |-
         Updates one entry of the global pickup respawn timer table at dynamicBase+0x5A7C+areaIndex*4.
         It adds elapsedMilliseconds/1000.0 to the shared scheduler float at r0+4. At the 60.0-second threshold it clears the accumulator, then advances byte r0+0 through area indexes 0..99 and decrements each configured timer word low 9 bits. At zero it selects new point bits and reloads low9 from the encoded respawn count.
+        The point-count RNG is for the current respawn, not the next one. It popcounts the current availability mask, calls UpdateAT, and reduces the result modulo (maximumPointCount-currentCount+1). When currentCount is zero, the result is clamped up to the encoded minimum count. A second UpdateAT result modulo maximumPointCount chooses the starting point index. The same call then sets that many empty availability bits, calls the materialization consumer, and reloads the timer.
+        Dynamic okunai.dst events confirmed the dataflow. Area 61 used count result 0x23E7 % 6 = 5 and placement result 0x0558 % 5 = 3, immediately changed from count 0 to mask 0x1F/count 5, then reloaded word 0xA23E2A1E. Area 69 and 71 independently confirmed minimum-count clamping. When currentCount is nonzero, a zero-addition result is possible.
         For example, area 5 uses timer 0x020F8E68. A pickup sets low9 to 30, and the confirmed decrement write at 0x0208F91C changes 29 to 28. Area 18 reloads to 360 and was observed as 359 immediately after the next decrement.
         The pickup operation does not reset the shared scheduler accumulator or sweep index, so the first decrement after pickup can occur before a full 60 seconds.
         
