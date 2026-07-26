@@ -592,6 +592,16 @@ main:
         While creating the adventure book (4th slime), consume BT to generate the initial members of Ruida's Tavern.
         I don't know about anything else.
         It is known that the processing is different between the eur version and the jpn version.
+    - name: setItemPickupFountainGroup
+      address:
+        jpn: 0x2011E50
+      description: |-
+        Stores the persistent fountain group byte at dynamicBase+0x5A7A (0x020F8E52 in the Japanese version), then clears byte +0x0A of the structure returned by getItemPickupStructureAddr.
+        The value is 0 through 7 for the groups ore, stone, holy water, flower, sea, grass, mushroom, and sand. Value 8 is the uninitialized sentinel before this setter runs.
+        Known callers include the new-character initialization path at main:0208F364, loadItemPickupTimerSaveBlock at main:020AB760, and overlay 17 at 021B1400.
+        
+        r0: dynamic base returned by getDynamicAllocatedMemIndexStartAddr
+        r1: fountain group byte
     - name: TryMovingField
       address:
         jpn: 0x2013604
@@ -920,13 +930,17 @@ main:
       address:
         jpn: 0x208F320
       description: |-
-        Dispatches pickup timer initialization using the selector byte at dynamicBase+0x5A7A (0x020F8E52 in the Japanese version).
+        Dispatches pickup timer initialization using the persistent fountain-group byte at dynamicBase+0x5A7A (0x020F8E52 in the Japanese version).
         
         Algorithm:
         - Selectors 0 through 7 take the normal-save-load path and call applyItemPickupNormalLoadInitialization.
-        - Selector 8 takes the separate new-initialization path, which calls UpdateAT; the normal-load path does not call UpdateAT.
+        - Selector 8 is the uninitialized sentinel and takes the separate new-character path. It calls UpdateAT, reduces the nonnegative 15-bit return value modulo 8, and calls setItemPickupFountainGroup.
+        - With desmume-state (5).dst, the fountain selection uses the eighth UpdateAT consumption after the seed present at character confirmation (zero-based index 7). Seed 0x48037FE4 advances through 0x4F69CE6F after seven calls and 0xE5CCE77C after eight; return 0x65CC selects group 4.
+        - The normal-load path does not call UpdateAT for the fountain group.
         - This branch and call path were matched between the main:0208F320 listing and repeated menu.dst runtime breakpoints.
         - Changing the selector byte to every value 0 through 7, with immediate write readback, produced the same normal-load transform with zero mismatches across all 100 timer words.
+        - The full seed range 0x00032600 through 0x000327FF was executed through the live main:02003C30 and main:0208F350..0208F360 instructions with zero mismatches against the eight-consumption model (512/512).
+        - During the character-confirmation State, overlay_jp.js reported overlay 17 loaded in slot 2 at 0x0218C1C0. Its caller at overlay_d_17:0218C940 invokes this main-memory function; the live main instruction bytes match the Ghidra listing.
         
         Parameters:
         - None observed; reads the pickup selector and timer table through the dynamic global base.
