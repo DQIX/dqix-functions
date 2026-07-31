@@ -1481,6 +1481,34 @@ main:
       description: |-
         Runtime overlay 0 function. Returns [menuData + 0x1E4 + index*4] for skill indexes 0..0x92, otherwise 0.
         Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: getBattleItemRecord_overlay0
+      address:
+        jpn: 0x2173448
+      description: |-
+        Runtime overlay 0 function. Returns [menuData + 0x430 + index*4] for battle item/equipment indexes 0..15, otherwise 0.
+        The selected signed-byte index is menuData +0x22.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: countBattleItemRecords_overlay0
+      address:
+        jpn: 0x217346C
+      description: |-
+        Runtime overlay 0 function. Counts non-null battle item/equipment records whose u16 field at record +0x18 is greater than zero.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: buildBattleItemRecordList_overlay0
+      address:
+        jpn: 0x21734B0
+      description: |-
+        Runtime overlay 0 function that builds the 16-entry pointer list at menuData +0x430.
+        It appends carried-item records whose record +0x08 low nibble is greater than 7, pads the carried part to a four-row page boundary, then appends equipped-slot records derived from player data +0x194 whose low nibble is 0..7.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: prepareBattleItemSelection_overlay0
+      address:
+        jpn: 0x217370C
+      description: |-
+        Runtime overlay 0 function used after an item/equipment row is selected.
+        It reads the selected record through menuData +0x430 and looks up an attack/use-effect structure using the u16 effect ID at record +0x16.
+        A valid use-effect structure is routed through the normal next-command selector; a missing structure pushes fallback substate 0x0e, which is unsafe for effectless equipped rows because it consumes/skips the actor turn.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
     - name: buildBattleSpellListText_overlay0
       address:
         jpn: 0x217A384
@@ -1491,6 +1519,32 @@ main:
         jpn: 0x217A7C0
       description: |-
         Runtime overlay 0 function. Iterates the visible skill range, emits enabled/disabled text style from the skill bitmap, and appends each skill name.
+    - name: renderBattleItemMenu_overlay0
+      address:
+        jpn: 0x217A8D8
+      description: |-
+        Runtime overlay 0 renderer for battle menu substate 0x11.
+        Builds the four-visible-row item/equipment menu and calls buildBattleItemListText_overlay0.
+    - name: buildBattleItemListText_overlay0
+      address:
+        jpn: 0x217AB5C
+      description: |-
+        Runtime overlay 0 visible-row builder for the item/equipment list.
+        Reads rows through getBattleItemRecord_overlay0 and appends the label pointer at record +0x04.
+        Record +0x08 low nibble 8 is a carried-item slot; values 0..7 are equipped slots.
+        Equipment is selectable only when it has a live in-battle use effect. The supplied state has none; selecting an effectless equipped row consumes/skips the actor turn.
+    - name: renderBattleCoupMenu_overlay0
+      address:
+        jpn: 0x217AEF8
+      description: |-
+        Runtime overlay 0 renderer for the one-row coup-de-grace intermediate menu at substate 0x15.
+        This screen requires a second A confirmation after choosing ひっさつ at the action root.
+    - name: buildBattleCoupListText_overlay0
+      address:
+        jpn: 0x217B24C
+      description: |-
+        Runtime overlay 0 coup-de-grace row builder.
+        Uses the selected index at menuData +0x23 and emits the current actor's coup label.
     - name: prepareBattleSkillSelection_overlay0
       address:
         jpn: 0x21730B8
@@ -1505,6 +1559,20 @@ main:
       description: |-
         Runtime overlay 0 function. Rechecks isBattleSkillEnabled for the selected absolute index.
         A zero bit leaves the submenu state unchanged; a set bit advances the selected skill command path.
+    - name: confirmBattleItemSelection_overlay0
+      address:
+        jpn: 0x217CBF8
+      description: |-
+        Runtime overlay 0 item-menu A-button handler.
+        It validates the selected record, stores record +0x18 into menuData +0x2c, and calls prepareBattleItemSelection_overlay0.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: syncBattleVariableMenuCursor_overlay0
+      address:
+        jpn: 0x217D4AC
+      description: |-
+        Runtime overlay 0 cursor synchronizer used by the spell, skill, and item variable menus.
+        It copies the active menu object's absolute selection back to the category-specific selected field in menuData.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
     - name: buildBattleSkillEnabledBitmap_overlay0
       address:
         jpn: 0x217D680
@@ -1598,6 +1666,15 @@ main:
       length:
         jpn: 0x8
         eur: 0x8
+    - name: BattleMenuSubstateStack
+      address:
+        jpn: 0x2392E44
+      length:
+        jpn: 0x9
+      description: |-
+        Battle menu substate byte stack at menu data +0x10 followed by its index byte at +0x18.
+        Runtime-confirmed values include 0x0d action root, 0x0f spell list, 0x10 skill list, 0x15 coup-de-grace intermediate confirmation, and 0x64 queued/target-or-action continuation.
+        On the 0x15 coup screen, B returns to substate 0x0d; a second A after a fully released input interval advances to 0x64 and BattleScreenState 8/3.
     - name: BattleScreenState
       address:
         jpn: 0x238FBE4
