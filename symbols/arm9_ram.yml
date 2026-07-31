@@ -602,6 +602,50 @@ main:
         
         r0: dynamic base returned by getDynamicAllocatedMemIndexStartAddr
         r1: fountain group byte
+    - name: updateKeyInputState
+      address:
+        jpn: 0x2012018
+      description: |-
+        Updates a key-input state structure once per frame.
+        The previous active-high button mask is stored at +0x02, then readKeyInputMask is called and the new mask is stored at +0x00.
+        
+        r0: key-input state structure
+        return: void
+    - name: readKeyInputMask
+      address:
+        jpn: 0x20120D0
+      description: |-
+        Reads hardware KEYINPUT at 0x04000130 and the shared key mirror at 0x027FFFA8.
+        Converts the active-low values into one active-high 14-bit button mask.
+        
+        return: (KEYINPUT | shared key mirror) XOR 0x2FFF, masked with 0x2FFF
+    - name: isButtonHeld
+      address:
+        jpn: 0x20121AC
+      description: |-
+        Tests whether any requested button bit is present in the current active-high key mask.
+        
+        r0: key-input state structure; current mask at +0x00
+        r1: button mask
+        return: bool
+    - name: isButtonNewPress
+      address:
+        jpn: 0x20121C0
+      description: |-
+        Tests for a button press edge: requested in current mask and absent from previous mask.
+        
+        r0: key-input state structure; current mask at +0x00, previous mask at +0x02
+        r1: button mask
+        return: bool
+    - name: isButtonReleased
+      address:
+        jpn: 0x20121E4
+      description: |-
+        Tests for a button release edge: requested absent from current mask and present in previous mask.
+        
+        r0: key-input state structure; current mask at +0x00, previous mask at +0x02
+        r1: button mask
+        return: bool
     - name: TryMovingField
       address:
         jpn: 0x2013604
@@ -673,6 +717,64 @@ main:
         
         r0: ?
         return: (int) 0x17B38 etc
+    - name: appendMenuTextAtRow
+      address:
+        jpn: 0x20421FC
+      description: |-
+        Appends a menu-text command containing a visible row index and a string pointer to a NUL-terminated text command buffer.
+        Confirmed dynamically while overlay 0 built the variable battle skill list in FUN_overlay_d_00__0217a7c0.
+        The source string may contain DQ9 display markup such as [斬/ぎ].
+        
+        r0: NUL-terminated text command buffer
+        r1: visible row index relative to the current scroll start
+        r2: Shift-JIS/CP932 menu-label pointer
+        return: updated byte length/offset in the command buffer
+    - name: getBattleActorEquipmentState
+      address:
+        jpn: 0x20541E4
+      description: |-
+        Returns the equipment-state structure at player data +0x488 for a battle actor, or 0 when no player data is attached.
+        
+        r0: battle actor
+        return: [r0 + 0x144] + 0x488, or 0
+    - name: getBattleActorPlayerData
+      address:
+        jpn: 0x2054FE4
+      description: |-
+        Returns the player-data pointer owned by a battle actor.
+        Confirmed in the battle spell-detail and MP-cost path.
+        
+        r0: battle actor
+        return: [r0 + 0x144]
+    - name: getBattleActorPrimaryWeaponData
+      address:
+        jpn: 0x2055378
+      description: |-
+        Returns the primary-weapon data at player data +0x294 when the actor has an equipped weapon count at player data +0x496; otherwise returns 0.
+        Used by overlay 0 when building the battle-skill enabled bitmap.
+        
+        r0: battle actor
+        return: primary-weapon data or 0
+    - name: getMenuEntryCount
+      address:
+        jpn: 0x205CE5C
+      description: |-
+        Returns the total entry count stored in the first word of a menu pagination structure.
+        Confirmed in the variable battle skill-list construction path.
+        
+        r0: menu pagination structure
+        return: total entry count at [r0]
+    - name: getMenuVisibleRange
+      address:
+        jpn: 0x205D868
+      description: |-
+        Computes the absolute start and exclusive end indexes for the current visible page.
+        start = columns * visible rows * page; end = min(total count, start + columns * visible rows).
+        
+        r0: menu pagination structure
+        r1: output start index
+        r2: output exclusive end index
+        return: void
     - name: getStoryFlagStartAddr
       address:
         jpn: 0x205FF20
@@ -1015,6 +1117,16 @@ main:
         For example, F02 joins to map 0x4E22 and areas 5/6, while F07 joins to map 0x4E27 and areas 18/19/20.
         
         r0: destination map-list owner/work object saved while the interpreter runs
+    - name: findSkillWeaponRequirement
+      address:
+        jpn: 0x209C368
+      description: |-
+        Searches a loaded 12-byte-record skill requirement table by numeric skill ID.
+        The returned record contains the weapon category used by overlay 0 to decide whether a learned battle skill can be confirmed with the current equipment.
+        
+        r0: table object; [r0] records, [r0+4] count
+        r1: numeric skill ID
+        return: matching 12-byte record or 0
     - name: WriteEncounterId
       address:
         jpn: 0x209CC14
@@ -1325,6 +1437,15 @@ main:
         r0: form ptr
         r0: to ptr
         r1: length
+    - name: strlenTextCommandBuffer
+      address:
+        jpn: 0x20D4A54
+      description: |-
+        Returns the byte length of a NUL-terminated string.
+        Used by appendMenuTextAtRow and neighboring text-command builders to append at the current terminator.
+        
+        r0: NUL-terminated byte string
+        return: byte length excluding the terminator
     - name: DSProtectDetectedCallbacks2
       address:
         jpn: 0x20D8614
@@ -1335,9 +1456,66 @@ main:
         
         r0: is Detected
         return(s): 0x80 etc
+    - name: adjustSpellMpCostForActor
+      address:
+        jpn: 0x20DEC0C
+      description: |-
+        Returns the effective spell MP cost for one battle actor.
+        Normally returns the base cost unchanged. If player-data ability flag 0x106 is set, it applies the game's approximately 75 percent rounded-up cost adjustment.
+        
+        r0: battle actor
+        r1: base MP cost from spell definition +0x08
+        return: effective MP cost, or 0 for a null actor/zero cost
     - name: initMonsterData
       address:
         jpn: 0x21677AC
+    - name: getBattleSpellRecord_overlay0
+      address:
+        jpn: 0x217305C
+      description: |-
+        Runtime overlay 0 function. Returns [menuData + 0xDC + index*4] for spell indexes 0..0x41, otherwise 0.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: getBattleSkillRecord_overlay0
+      address:
+        jpn: 0x21732EC
+      description: |-
+        Runtime overlay 0 function. Returns [menuData + 0x1E4 + index*4] for skill indexes 0..0x92, otherwise 0.
+        Valid only while battle overlay 0 is loaded at its Japanese runtime address.
+    - name: buildBattleSpellListText_overlay0
+      address:
+        jpn: 0x217A384
+      description: |-
+        Runtime overlay 0 function. Iterates the visible spell range and appends each spell name through appendMenuTextAtRow.
+    - name: buildBattleSkillListText_overlay0
+      address:
+        jpn: 0x217A7C0
+      description: |-
+        Runtime overlay 0 function. Iterates the visible skill range, emits enabled/disabled text style from the skill bitmap, and appends each skill name.
+    - name: prepareBattleSkillSelection_overlay0
+      address:
+        jpn: 0x21730B8
+      description: |-
+        Runtime overlay 0 function used after a skill has been selected.
+        Reads the selected skill record's base MP cost at +0x08, applies adjustSpellMpCostForActor, and compares the effective cost with the current battle-menu MP value at menu data +0x0e.
+        Sufficient MP advances to the next command substate; insufficient MP selects the failure substate 0x1a instead.
+        This address is valid only while overlay slot 0 contains the battle overlay; identify overlays by content before reusing it in another scene.
+    - name: confirmBattleSkillSelection_overlay0
+      address:
+        jpn: 0x217CA24
+      description: |-
+        Runtime overlay 0 function. Rechecks isBattleSkillEnabled for the selected absolute index.
+        A zero bit leaves the submenu state unchanged; a set bit advances the selected skill command path.
+    - name: buildBattleSkillEnabledBitmap_overlay0
+      address:
+        jpn: 0x217D680
+      description: |-
+        Runtime overlay 0 function. Clears menuData +0xC8 for 0x13 bytes, then sets one bit per skill whose required weapon category matches the actor's allowed primary/secondary equipment category or another explicitly allowed requirement.
+    - name: isBattleSkillEnabled_overlay0
+      address:
+        jpn: 0x217D83C
+      description: |-
+        Runtime overlay 0 function. Tests bit index&7 at menuData +0xC8 + (index>>3).
+        Used by both skill-list text styling and A-button confirmation gating.
   data:
     - name: AT_LCG_Location
       address:
@@ -1347,6 +1525,33 @@ main:
       length:
         jpn: 0x4
         eur: 0x4
+    - name: FirstPartyMemberPlayerData
+      address:
+        jpn: 0x20F52B0
+      length:
+        jpn: 0x878
+      description: |-
+        Runtime player-data structure for party member 1 in the supplied Japanese battle state.
+        The current battle actor resolves this pointer through battle actor +0x144 (getBattleActorPlayerData).
+        Confirmed fields include u16 +0x1c current HP, u16 +0x1e current MP, +0x488 equipment state, and ability flags through at least +0x874.
+        The length is the minimum observed span needed to include +0x874; it is not a confirmed complete structure size.
+    - name: FirstPartyMemberCurrentHpMp
+      address:
+        jpn: 0x20F52CC
+      length:
+        jpn: 0x4
+      description: |-
+        Contiguous current HP/MP pair for party member 1 in the Japanese player-data structure.
+        u16 +0x00 is current HP and u16 +0x02 is current MP.
+        Runtime values in the supplied battle-start state were HP 297 and MP 155; casting ホイミ changed MP to 153.
+    - name: FirstPartyMemberCoupCharge
+      address:
+        jpn: 0x20F537F
+      length:
+        jpn: 0x1
+      description: |-
+        Battle coup-de-grace charge byte for party member 1.
+        Writing 0x78, equivalent to Action Replay code 220F537F 00000078, makes the Japanese battle command ひっさつ available and glowing.
     - name: ItemPickupGlobalTimerTable
       address:
         jpn: 0x20F8E54
@@ -1393,3 +1598,13 @@ main:
       length:
         jpn: 0x8
         eur: 0x8
+    - name: BattleScreenState
+      address:
+        jpn: 0x238FBE4
+      length:
+        jpn: 0x8
+      description: |-
+        Two-word battle screen/progression state, dynamically verified across one complete ホイミ action.
+        Word +0x00 was 7 for top/action/skill/spell selection screens, 0x13 for target selection, and 8 during queued action/animation.
+        Word +0x04 was 4 on selection screens, 0 for target selection, and changed among 1, 2, 3, and 6 during animation.
+        The next selectable turn returned to 7/4. Pair this with battle owner state-stack state 1 before declaring the next top menu ready.
