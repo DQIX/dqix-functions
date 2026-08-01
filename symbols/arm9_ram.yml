@@ -1584,6 +1584,49 @@ main:
       description: |-
         Runtime overlay 0 function. Tests bit index&7 at menuData +0xC8 + (index>>3).
         Used by both skill-list text styling and A-button confirmation gating.
+    - name: candidate_loadNitroFsFileToBuffer
+      address:
+        jpn: 0x2076224
+      description: |-
+        Confidence: candidate (static decompile and file-path callers only).
+        Opens the NitroFS path in r0 and reads it into the buffer in r1. Writes the loaded byte length through r2 when r2 is non-null. Returns r1 on success and 0 on failure.
+        Callers at 0x0209C09C and 0x0209C130 pass data/prm/skilltable.bin and the shared buffer at 0x0211FB64.
+    - name: candidate_loadPackedRecordTable34
+      address:
+        jpn: 0x207A8E8
+      description: |-
+        Confidence: candidate (static decompile plus the independently observed 0x34-byte skill-definition stride).
+        Builds an owned table from the packed blob in r2. The low 12 bits of the first u32 are the record count; records have stride 0x34. r0 is the destination table object, r1 is the allocator/context, and r3 is an optional per-record callback. Returns 1 on success and 0 for null inputs.
+    - name: candidate_loadPackedRecordTable08
+      address:
+        jpn: 0x207AA2C
+      description: |-
+        Confidence: candidate (static decompile only).
+        Companion packed-table loader using 8-byte records. The low 12 bits of the first u32 are the record count. r0 is the destination table object, r1 is the allocator/context, r2 is the packed blob, and r3 is an optional per-record callback. Returns 1 on success and 0 for null inputs.
+    - name: candidate_loadBattleActionData
+      address:
+        jpn: 0x207AB68
+      description: |-
+        Confidence: supported for file ownership, candidate for detailed types.
+        Loads data/prm/actdata_b.gp2 through the local file/archive layer, extracts two named members, and passes them to candidate_loadPackedRecordTable34 at r0+0x0C and candidate_loadPackedRecordTable08 at r0+0x24.
+        r0 is the destination battle-action data owner and r1 is the allocator/context. Static filename xref: data/prm/actdata_b.gp2 at 0x020F0EC9.
+    - name: candidate_relocatePackedRecordName
+      address:
+        jpn: 0x207A6FC
+      description: |-
+        Confidence: supported by ARM listing and exact ROM table reconstruction.
+        Per-record callback used by candidate_loadPackedRecordTable34. r0 is the table object and r1 is the current 0x34-byte record. It replaces record +0x00 with table string-pool pointer at r0+0x08 plus the raw pool-relative offset; raw -1 becomes null.
+        The next field, record +0x04, begins with the little-endian u16 internal action/skill ID.
+    - name: getPackedRecordTable34ByteLength
+      address:
+        jpn: 0x207AA14
+      description: |-
+        Returns `(header & 0xFFF) * 0x34`, the byte length of the fixed records in the battle-action table object passed in r0.
+    - name: getPackedRecordTable08ByteLength
+      address:
+        jpn: 0x207AB58
+      description: |-
+        Returns `(header & 0xFFF) * 8`, the byte length of the companion packed record table passed in r0.
   data:
     - name: AT_LCG_Location
       address:
