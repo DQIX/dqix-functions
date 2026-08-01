@@ -1,0 +1,937 @@
+main:
+  versions:
+    - jpn
+  address:
+    jpn: 0x21D9300
+  length:
+    jpn: 0x27620
+  description: |-
+    DQ9 battle overlay 24.
+    ROM overlay file ID 24; compressed FAT range 1562624..1640084.
+    Handler identities come from the 67-slot descriptor table at overlay_d_24:021ff9c0.
+    Selector formulas use IEEE-754 binary32 helper operations; each helper result is rounded to binary32.
+    getFloatRandRange(min,max) below denotes the main function's binary32 result and includes both endpoints.
+    trunc(x) means main FloatToInt1 conversion toward zero after binary32 evaluation.
+    Party power source used by selector formulas: overlay_d_00:02154e90 resolves battleActor + 0x144 to playerData; index = s32(playerData + 0x8B8); power = u16(playerData + 0x16C + 2 * index).
+    Enemy indexes use overlay_d_00:0215b53c instead; it returns an enemy-specific 7-bit power value on the normal path.
+    The player power-array index semantics are not yet named. Runtime comparison against known attack power, magical might, and magical mending values is required.
+  functions:
+    - name: FUN_overlay_d_24__021d9300
+      address:
+        jpn: 0x021D9300
+      description: |-
+        Selector 1 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9300.
+        Action count: 1.
+        Actions:
+        - 0x003F ドラゴン斬り
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 2, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9300; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9344
+      address:
+        jpn: 0x021D9344
+      description: |-
+        Selector 2 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9344.
+        Action count: 2.
+        Actions:
+        - 0x0040 メタル斬り
+        - 0x007E メタルウィング
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 0, 1, target).
+        Returns incoming + 1 when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9344; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9374
+      address:
+        jpn: 0x021D9374
+      description: |-
+        Selector 3 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9374.
+        Action count: 1.
+        Actions:
+        - 0x0041 ミラクルソード
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.25 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9374; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9398
+      address:
+        jpn: 0x021D9398
+      description: |-
+        Selector 4 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9398.
+        Action count: 0.
+        Resolves the records named by handler arguments 2 and 3; lookup failure leaves the fallback path.
+        On success: scaledAttack = trunc(0.75 * u16(*(record2 + 0x138) + 0x08)); defense = u16(*(record3 + 0x138) + 0x0A).
+        Returns trunc(getNormalAttackBaseDamage(scaledAttack, defense, context)).
+        RNG calls: those consumed by getNormalAttackBaseDamage.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9398; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9428
+      address:
+        jpn: 0x021D9428
+      description: |-
+        Selector 5 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9428.
+        Action count: 1.
+        Actions:
+        - 0x00F4 
+        Resolves argument-2 actor data and reads u16(*(record + 0x134) + 0x34).
+        Returns trunc(stat * getFloatRandRange(0.85, 0.95)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9428; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9488
+      address:
+        jpn: 0x021D9488
+      description: |-
+        Selector 6 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9488.
+        Action count: 1.
+        Actions:
+        - 0x00F5 
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(2.5 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9488; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d94ac
+      address:
+        jpn: 0x021D94AC
+      description: |-
+        Selector 7 direct descriptor target.
+        Qualified identity: overlay_d_24:021d94ac.
+        Action count: 15.
+        Actions:
+        - 0x005A 双竜打ち
+        - 0x00EB とつげき
+        - 0x0132 のしかかる
+        - 0x0133 笑いながら攻撃
+        - 0x0134 ボディアタック
+        - 0x0135 ツメできりさく
+        - 0x0136 ツメを振り回す
+        - 0x0137 いきりたって攻撃
+        - 0x0138 飛びかかる
+        - 0x0139 弓矢うち
+        - 0x013A はげしく斬りつける
+        - 0x013B かみつく
+        - 0x013C ふみつけ
+        - 0x013D はりたおす
+        - 0x022D わしづかみ
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.25 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d94ac; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d94d0
+      address:
+        jpn: 0x021D94D0
+      description: |-
+        Selector 8 direct descriptor target.
+        Qualified identity: overlay_d_24:021d94d0.
+        Action count: 1.
+        Actions:
+        - 0x001C マダンテ
+        Player Magic Burst base handler.
+        Returns the incoming stack damage when actor lookup fails.
+        Otherwise reads signed context + 0x8E54 and returns it unchanged when actor flag 0x200 is set, or truncates 1.5 times it when clear.
+        RNG calls: none.
+        Evidence: descriptor table plus listing/decompile at overlay_d_24:021d94d0; semantics supported.
+    - name: FUN_overlay_d_24__021d9530
+      address:
+        jpn: 0x021D9530
+      description: |-
+        Selector 9 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9530.
+        Action count: 4.
+        Actions:
+        - 0x0042 はやぶさ斬り
+        - 0x0045 しっぷうづき
+        - 0x0064 タイガークロー
+        - 0x021B おうふくビンタ
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(0.75 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9530; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9550
+      address:
+        jpn: 0x021D9550
+      description: |-
+        Selector 10 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9550.
+        Action count: 1.
+        Actions:
+        - 0x0046 けものづき
+        Returns incoming stack damage unchanged unless main 0x021577E8 succeeds; on success returns trunc(1.5 * incoming damage).
+        RNG calls: none.
+        Evidence: listing/decompile at overlay_d_24:021d9550; semantics supported.
+    - name: FUN_overlay_d_24__021d9594
+      address:
+        jpn: 0x021D9594
+      description: |-
+        Selector 11 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9594.
+        Action count: 7.
+        Actions:
+        - 0x0047 きゅうしょづき
+        - 0x0049 さみだれづき
+        - 0x006B おうぎのまい
+        - 0x0083 さみだれうち
+        - 0x0086 シールドアタック
+        - 0x008F ばくれつけん
+        - 0x0124 さみだれぎり
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(0.5 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9594; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d95b4
+      address:
+        jpn: 0x021D95B4
+      description: |-
+        Selector 12 direct descriptor target.
+        Qualified identity: overlay_d_24:021d95b4.
+        Action count: 1.
+        Actions:
+        - 0x004C キラーブーン
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 3, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d95b4; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d95f8
+      address:
+        jpn: 0x021D95F8
+      description: |-
+        Selector 13 direct descriptor target.
+        Qualified identity: overlay_d_24:021d95f8.
+        Action count: 1.
+        Actions:
+        - 0x004D タナトスハント
+        incoming: sixth handler argument (stack + 0x4).
+        Resolves argument-3 target data. If FUN_02088EB0 or FUN_02088E10 succeeds, or target flags at +0x14 contain bit 0x08, returns trunc(1.5 * incoming); otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d95f8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d966c
+      address:
+        jpn: 0x021D966C
+      description: |-
+        Selector 14 direct descriptor target.
+        Qualified identity: overlay_d_24:021d966c.
+        Action count: 2.
+        Actions:
+        - 0x004F バンパイアエッジ
+        - 0x0059 ヒールウィップ
+        Returns incoming unchanged (sixth handler argument at stack + 0x4).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d966c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9674
+      address:
+        jpn: 0x021D9674
+      description: |-
+        Selector 15 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9674.
+        Action count: 1.
+        Actions:
+        - 0x0050 ヒュプノスハント
+        incoming: sixth handler argument (stack + 0x4).
+        Resolves argument-3 target data. If FUN_02088BF4 succeeds or target flags at +0x14 contain bit 0x20, returns trunc(2.0 * incoming); otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9674; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d96d8
+      address:
+        jpn: 0x021D96D8
+      description: |-
+        Selector 16 direct descriptor target.
+        Qualified identity: overlay_d_24:021d96d8.
+        Action count: 1.
+        Actions:
+        - 0x0056 愛のムチ
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 11, 0, target).
+        Returns trunc(1.25 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d96d8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9720
+      address:
+        jpn: 0x021D9720
+      description: |-
+        Selector 17 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9720.
+        Action count: 1.
+        Actions:
+        - 0x005B 地這い大蛇
+        Returns incoming << 1, i.e. 2 * incoming (sixth handler argument at stack + 0x4).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9720; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d972c
+      address:
+        jpn: 0x021D972C
+      description: |-
+        Selector 18 direct descriptor target.
+        Qualified identity: overlay_d_24:021d972c.
+        Action count: 1.
+        Actions:
+        - 0x005D 黄泉送り
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 8, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d972c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9770
+      address:
+        jpn: 0x021D9770
+      description: |-
+        Selector 19 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9770.
+        Action count: 4.
+        Actions:
+        - 0x005F 氷結らんげき
+        - 0x007D バーニングバード
+        - 0x021E ラッシュ
+        - 0x0324 キラージャグリング
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(0.3 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9770; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9794
+      address:
+        jpn: 0x021D9794
+      description: |-
+        Selector 20 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9794.
+        Action count: 1.
+        Actions:
+        - 0x0062 裂鋼拳
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 7, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9794; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d97d8
+      address:
+        jpn: 0x021D97D8
+      description: |-
+        Selector 21 direct descriptor target.
+        Qualified identity: overlay_d_24:021d97d8.
+        Action count: 1.
+        Actions:
+        - 0x0063 ネイルスクラッチ
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(incoming * getFloatRandRange(0.1, 0.5)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d97d8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d980c
+      address:
+        jpn: 0x021D980C
+      description: |-
+        Selector 22 direct descriptor target.
+        Qualified identity: overlay_d_24:021d980c.
+        Action count: 1.
+        Actions:
+        - 0x0069 波紋演舞
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 12, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d980c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9850
+      address:
+        jpn: 0x021D9850
+      description: |-
+        Selector 23 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9850.
+        Action count: 1.
+        Actions:
+        - 0x006E たいぼく斬
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 5, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9850; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9894
+      address:
+        jpn: 0x021D9894
+      description: |-
+        Selector 24 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9894.
+        Action count: 1.
+        Actions:
+        - 0x006F 蒼天魔斬
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.3 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9894; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d98b8
+      address:
+        jpn: 0x021D98B8
+      description: |-
+        Selector 25 direct descriptor target.
+        Qualified identity: overlay_d_24:021d98b8.
+        Action count: 8.
+        Actions:
+        - 0x0075 ラストバッター
+        - 0x00AC とうこん討ち
+        - 0x00F9 いなずまづき
+        - 0x0114 アイスジャベリン
+        - 0x0115 岩投げ
+        - 0x0117 かえん斬り
+        - 0x0118 マヒャド斬り
+        - 0x021A いなずま斬り
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.2 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d98b8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d98dc
+      address:
+        jpn: 0x021D98DC
+      description: |-
+        Selector 26 direct descriptor target.
+        Qualified identity: overlay_d_24:021d98dc.
+        Action count: 1.
+        Actions:
+        - 0x0076 ドラムクラッシュ
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 6, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d98dc; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9920
+      address:
+        jpn: 0x021D9920
+      description: |-
+        Selector 27 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9920.
+        Action count: 2.
+        Actions:
+        - 0x007A パワフルスロー
+        - 0x0227 鉄球ぶん回し２
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(0.8 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9920; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9944
+      address:
+        jpn: 0x021D9944
+      description: |-
+        Selector 28 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9944.
+        Action count: 1.
+        Actions:
+        - 0x007B スライムブロウ
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 0, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9944; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9988
+      address:
+        jpn: 0x021D9988
+      description: |-
+        Selector 29 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9988.
+        Action count: 1.
+        Actions:
+        - 0x007F ギガスロー
+        Resolves power from the party/enemy actor selected by argument 2.
+        Returns trunc((125 + 2 * power) * getFloatRandRange(0.85, 1.15)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9988; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9a34
+      address:
+        jpn: 0x021D9A34
+      description: |-
+        Selector 30 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9a34.
+        Action count: 1.
+        Actions:
+        - 0x0081 バードシュート
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 4, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9a34; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9a78
+      address:
+        jpn: 0x021D9A78
+      description: |-
+        Selector 31 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9a78.
+        Action count: 1.
+        Actions:
+        - 0x0084 天使の矢
+        Returns incoming unchanged (sixth handler argument at stack + 0x4).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9a78; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9a80
+      address:
+        jpn: 0x021D9A80
+      description: |-
+        Selector 32 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9a80.
+        Action count: 1.
+        Actions:
+        - 0x008D かまいたち
+        incoming: sixth handler argument (stack + 0x4).
+        Calls main 0x021577E8(context, signed actor index, 10, 0, target).
+        Returns trunc(1.5 * incoming) when the predicate succeeds; otherwise returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9a80; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9ac4
+      address:
+        jpn: 0x021D9AC4
+      description: |-
+        Selector 33 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9ac4.
+        Action count: 4.
+        Actions:
+        - 0x008E せいけんづき
+        - 0x00AE 無心こうげき
+        - 0x021C 急降下
+        - 0x021D たたきつける
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.5 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9ac4; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9ae4
+      address:
+        jpn: 0x021D9AE4
+      description: |-
+        Selector 34 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9ae4.
+        Action count: 1.
+        Actions:
+        - 0x0091 ミラクルムーン
+        Returns signed integer quotient (incoming << 2) / (handler argument 4 + 1).
+        The tail call target stored at overlay_d_24:021d9af8 is main 0x0200CE08 (int32Division1); the quotient is returned in r0.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9ae4; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9afc
+      address:
+        jpn: 0x021D9AFC
+      description: |-
+        Selector 35 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9afc.
+        Action count: 1.
+        Actions:
+        - 0x0094 体当たり
+        Resolves argument-2 actor and argument-3 target records.
+        On success, writes trunc(0.8 * u16(*(actor + 0x138) + 0x00)) + 2 to context + 0x8E38.
+        Returns trunc(0.8 * u16(*(target + 0x138) + 0x00)); lookup failure returns incoming.
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9afc; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9b90
+      address:
+        jpn: 0x021D9B90
+      description: |-
+        Selector 36 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9b90.
+        Action count: 1.
+        Actions:
+        - 0x00AF もろば斬り
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(1.5 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9b90; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9bb0
+      address:
+        jpn: 0x021D9BB0
+      description: |-
+        Selector 37 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9bb0.
+        Action count: 0.
+        Returns incoming unchanged (sixth handler argument at stack + 0x4).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9bb0; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9bb8
+      address:
+        jpn: 0x021D9BB8
+      description: |-
+        Selector 38 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9bb8.
+        Action count: 1.
+        Actions:
+        - 0x00E9 鎌ブンブン
+        incoming: sixth handler argument (stack + 0x4).
+        Returns trunc(0.7 * incoming).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9bb8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9bdc
+      address:
+        jpn: 0x021D9BDC
+      description: |-
+        Selector 39 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9bdc.
+        Action count: 1.
+        Actions:
+        - 0x011F じばく
+        Resolves argument-2 actor data and reads u16(*(record + 0x138) + 0x04).
+        Returns trunc(fieldValue * getFloatRandRange(0.2, 0.3)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9bdc; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9c3c
+      address:
+        jpn: 0x021D9C3C
+      description: |-
+        Selector 40 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9c3c.
+        Action count: 1.
+        Actions:
+        - 0x0120 じばく
+        Resolves argument-2 actor data and reads u16(*(record + 0x138) + 0x04).
+        Returns trunc(fieldValue * getFloatRandRange(0.4, 0.6)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9c3c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9c9c
+      address:
+        jpn: 0x021D9C9C
+      description: |-
+        Selector 41 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9c9c.
+        Action count: 2.
+        Actions:
+        - 0x0122 じひびき
+        - 0x0226 鉄球ぶん回し
+        Resolves power from the party/enemy actor selected by argument 2.
+        Returns trunc(2.5 * power * getFloatRandRange(0.9, 1.1)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9c9c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9d3c
+      address:
+        jpn: 0x021D9D3C
+      description: |-
+        Selector 42 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9d3c.
+        Action count: 1.
+        Actions:
+        - 0x0126 おしつぶす
+        Resolves power from the party/enemy actor selected by argument 2.
+        Returns trunc(3.0 * power * getFloatRandRange(0.9, 1.1)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9d3c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9ddc
+      address:
+        jpn: 0x021D9DDC
+      description: |-
+        Selector 43 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9ddc.
+        Action count: 3.
+        Actions:
+        - 0x012C しんくうは
+        - 0x01DD サインぜめ
+        - 0x0225 つなみ
+        Resolves power from the party/enemy actor selected by argument 2.
+        base = min(2 * power + 30, 150); returns trunc(base * (1 + getFloatRandRange(-0.1, 0.1))).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9ddc; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9ea0
+      address:
+        jpn: 0x021D9EA0
+      description: |-
+        Selector 44 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9ea0.
+        Action count: 1.
+        Actions:
+        - 0x001B メガンテ
+        Resolves argument-3 target data, then consumes RandInt(context, 2).
+        If the random result is 0, returns trunc(0.99 * u16(*(target + 0x138) + 0x00)).
+        Otherwise writes 1 to context + 0x8E94 and returns sentinel 0xFFFF.
+        RNG calls: one RandInt call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9ea0; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021d9f14
+      address:
+        jpn: 0x021D9F14
+      description: |-
+        Selector 45 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9f14.
+        Action count: 2.
+        Actions:
+        - 0x0048 一閃づき
+        - 0x0070 まじん斬り
+        r0: per-damage context pointer; [r0 + 0x00] is the CT/RNG context passed to RandInt and getFloatRandRange.
+        r1: attacker actor index. The controlled 一閃づき sample used index 0 and actor lookup returned battleActor 0x022bbe04.
+        stack +0x00: selected action-record pointer; observed 0x02356af8 for 一閃づき.
+        stack +0x04: fallback/incoming value returned unchanged when actor lookup fails; observed 92.
+        actor = read_data_limit_e9(getDynamicAllocatedMemIndexStartAddr(), r1).
+        If actor is null, returns the stack +0x04 fallback. Otherwise calls RandInt([r0], 2). A positive outcome returns 0. The other outcome loads block = *(actor + 0x134), stat = u16(block + 0x34), and returns trunc(stat * getFloatRandRange([r0], 0.95f, 1.05f)).
+        RNG order and conditional consumption: RandInt is always consumed after a successful actor lookup; getFloatRandRange is consumed only on the damage outcome. Do not advance the float RNG on the zero-damage or actor-lookup-failure paths.
+        Live Japanese Gerunikku-State evidence for the damage branch: actor 0x022bbe04, block 0x020f52ec, stat 306. The status-screen reference attack value is 308, so call this a battle/selector offensive stat rather than assuming exact displayed ATK.
+        The same sample advanced RNG state 0x1b7ec0b52545ced2 to 0x5cd70f6d501d999d for the float call, used top32 0x5cd70f6d, produced binary32 multiplier bits 0x3f7c7be8, binary32 product 301.79730224609375, and returned 301 by truncation.
+        Evidence: qualified listing/decompile plus clean runtime entry, actor-lookup return, call stack, damage-branch stop, stepped LDR/LDRH at overlay_d_24:021d9f54..021d9f5c, exact LCG transition, and caller return at overlay_d_24:021daef0. Control flow, RNG order, binary32 result, actor +0x134 route, block +0x34 consumption, and truncating return are confirmed for this State.
+    - name: FUN_overlay_d_24__021d9f90
+      address:
+        jpn: 0x021D9F90
+      description: |-
+        Selector 47 direct descriptor target.
+        Qualified identity: overlay_d_24:021d9f90.
+        Action count: 3.
+        Actions:
+        - 0x01D5 マホトラ
+        - 0x01F5 
+        - 0x0394 
+        Resolves power from the party/enemy actor selected by argument 2.
+        Returns trunc(power / 4 + 5).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021d9f90; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da00c
+      address:
+        jpn: 0x021DA00C
+      description: |-
+        Selector 48 direct descriptor target.
+        Qualified identity: overlay_d_24:021da00c.
+        Action count: 1.
+        Actions:
+        - 0x0202 神の息吹
+        Resolves actor data through main 0x02154E60 and reads u16(*(record + 0x138) + 0x06).
+        Returns trunc(fieldValue * getFloatRandRange(0.2, 0.5)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da00c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da068
+      address:
+        jpn: 0x021DA068
+      description: |-
+        Selector 49 direct descriptor target.
+        Qualified identity: overlay_d_24:021da068.
+        Action count: 2.
+        Actions:
+        - 0x010A れんごくかえん
+        - 0x021F いなずま
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (power * power / 22 + 70) * (1 + getFloatRandRange(-0.1, 0.1)); B = 180 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da068; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da178
+      address:
+        jpn: 0x021DA178
+      description: |-
+        Selector 50 direct descriptor target.
+        Qualified identity: overlay_d_24:021da178.
+        Action count: 1.
+        Actions:
+        - 0x010E かがやくいき
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (power * power / 22 + 90) * (1 + getFloatRandRange(-0.1, 0.1)); B = 200 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da178; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da288
+      address:
+        jpn: 0x021DA288
+      description: |-
+        Selector 52 direct descriptor target.
+        Qualified identity: overlay_d_24:021da288.
+        Action count: 2.
+        Actions:
+        - 0x0217 やみのブレス
+        - 0x0219 ひかりのブレス
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (power * power / 23 + 100) * (1 + getFloatRandRange(-0.1, 0.1)); B = 170 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da288; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da398
+      address:
+        jpn: 0x021DA398
+      description: |-
+        Selector 54 direct descriptor target.
+        Qualified identity: overlay_d_24:021da398.
+        Action count: 1.
+        Actions:
+        - 0x0221 回転攻撃
+        Resolves power from the party/enemy actor selected by argument 2.
+        base = 2 * power + 10; returns trunc(base * (1 + getFloatRandRange(-0.1, 0.1))).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da398; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da44c
+      address:
+        jpn: 0x021DA44C
+      description: |-
+        Selector 55 direct descriptor target.
+        Qualified identity: overlay_d_24:021da44c.
+        Action count: 4.
+        Actions:
+        - 0x0228 おぞましいおたけび
+        - 0x0229 フェザースコール
+        - 0x0235 まばゆいせんこう
+        - 0x024C しんくうは
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (3 * power + 53) * getFloatRandRange(0.9, 1.1); B = 140 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da44c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da53c
+      address:
+        jpn: 0x021DA53C
+      description: |-
+        Selector 56 direct descriptor target.
+        Qualified identity: overlay_d_24:021da53c.
+        Action count: 1.
+        Actions:
+        - 0x022A 流星
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (5 * power + 50) * getFloatRandRange(0.9, 1.1); B = 200 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da53c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da62c
+      address:
+        jpn: 0x021DA62C
+      description: |-
+        Selector 57 direct descriptor target.
+        Qualified identity: overlay_d_24:021da62c.
+        Action count: 2.
+        Actions:
+        - 0x022B 念じボール
+        - 0x022C 神々の怒り
+        Returns incoming / 2 + 37 using signed integer division (incoming is stack + 0x4).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da62c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da640
+      address:
+        jpn: 0x021DA640
+      description: |-
+        Selector 58 direct descriptor target.
+        Qualified identity: overlay_d_24:021da640.
+        Action count: 1.
+        Actions:
+        - 0x0242 メラガイアー
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = 7 * power * getFloatRandRange(0.95, 1.05); B = 280 * getFloatRandRange(0.95, 1.05).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da640; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da720
+      address:
+        jpn: 0x021DA720
+      description: |-
+        Selector 59 direct descriptor target.
+        Qualified identity: overlay_d_24:021da720.
+        Action count: 1.
+        Actions:
+        - 0x0243 イオグランデ
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (power * power / 23 + 100) * (1 + getFloatRandRange(-0.05, 0.05)); B = 217 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da720; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da830
+      address:
+        jpn: 0x021DA830
+      description: |-
+        Selector 60 direct descriptor target.
+        Qualified identity: overlay_d_24:021da830.
+        Action count: 1.
+        Actions:
+        - 0x0244 マヒャデドス
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = (power * power / 26 + 150) * (1 + getFloatRandRange(-0.1, 0.1)); B = 200 * getFloatRandRange(0.95, 1.05).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da830; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021da940
+      address:
+        jpn: 0x021DA940
+      description: |-
+        Selector 61 direct descriptor target.
+        Qualified identity: overlay_d_24:021da940.
+        Action count: 1.
+        Actions:
+        - 0x0245 バギムーチョ
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = 6 * power * getFloatRandRange(0.6, 1.1); B = 180 * getFloatRandRange(0.7, 1.3).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021da940; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021daa28
+      address:
+        jpn: 0x021DAA28
+      description: |-
+        Selector 62 direct descriptor target.
+        Qualified identity: overlay_d_24:021daa28.
+        Action count: 1.
+        Actions:
+        - 0x0246 ドルマドン
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = 7 * power * getFloatRandRange(0.9, 1.1); B = 260 * getFloatRandRange(0.9, 1.1).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021daa28; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021dab08
+      address:
+        jpn: 0x021DAB08
+      description: |-
+        Selector 63 direct descriptor target.
+        Qualified identity: overlay_d_24:021dab08.
+        Action count: 1.
+        Actions:
+        - 0x0247 マダンテ
+        Enemy Magic Burst handler.
+        Returns trunc(max(power * 6 * getFloatRandRange(0.9, 1.0), 160 * getFloatRandRange(0.9, 1.1))).
+        RNG calls: two.
+        Evidence: listing/decompile and constants at overlay_d_24:021dab08; semantics supported.
+    - name: FUN_overlay_d_24__021dabe8
+      address:
+        jpn: 0x021DABE8
+      description: |-
+        Selector 64 direct descriptor target.
+        Qualified identity: overlay_d_24:021dabe8.
+        Action count: 0.
+        Resolves power from the party/enemy actor selected by argument 2.
+        A = 35 * getFloatRandRange(0.85, 1.15); B = 2 * power * getFloatRandRange(0.85, 1.15).
+        Returns trunc(max(A, B)).
+        RNG calls: two getFloatRandRange calls, A then B.
+        Evidence: raw decompilation plus constants at overlay_d_24:021dabe8; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021dacc4
+      address:
+        jpn: 0x021DACC4
+      description: |-
+        Selector 65 direct descriptor target.
+        Qualified identity: overlay_d_24:021dacc4.
+        Action count: 1.
+        Actions:
+        - 0x00C9 オオカミアタック
+        For actor indexes above 3 or failed lookups, returns incoming unchanged.
+        For a party actor with a resolved auxiliary record: returns incoming / 2 + trunc(0.25 * (u32(record + 0x04) & 0x3FF)).
+        RNG calls: none.
+        Evidence: raw decompilation plus constants at overlay_d_24:021dacc4; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021dad3c
+      address:
+        jpn: 0x021DAD3C
+      description: |-
+        Selector 66 direct descriptor target.
+        Qualified identity: overlay_d_24:021dad3c.
+        Action count: 1.
+        Actions:
+        - 0x0205 覇王斬
+        Runs only for party actor indexes 0..3.
+        Builds a four-entry short list from overlay_d_24:021fee94, calls main 0x0216017C, and sums u16(*(resolvedRecord + 0x138) + 0x08) for the returned members.
+        Returns trunc(sum * getFloatRandRange(0.95, 1.5)).
+        RNG calls: one getFloatRandRange call.
+        Evidence: raw decompilation plus constants at overlay_d_24:021dad3c; arithmetic/control flow supported, runtime semantics not dynamically confirmed.
+    - name: FUN_overlay_d_24__021dae1c
+      address:
+        jpn: 0x021DAE1C
+      description: |-
+        Selector dispatcher; qualified identity overlay_d_24:021dae1c. The indirect handler call is overlay_d_24:021daeec.
+        Dispatcher arguments 1..4 are r0..r3; arguments 5,6,7 are entry stack +0x00,+0x04,+0x08. Argument 6 is the action-record pointer and argument 7 is the fallback return.
+        selector = (u32(actionRecord + 0x18) >> 18) & 0x1ff. Selectors >=67, null action records, and zero descriptor word0 return argument 7 unchanged.
+        Descriptor stride is 8. Word0 is a direct target or virtual/member offset. Word1 arithmetic-shifted right by one adjusts argument 1; bit0 selects direct versus virtual resolution.
+        Handler ABI: adjusted argument1, dispatcher argument3, dispatcher argument4, low u16 dispatcher argument5, dispatcher argument6, dispatcher argument7. Handler r0 is the dispatcher return.
+        One-time initialization copies the descriptor at main 0x020e7604 into slots 0,46,51,53. Runtime source and patched descriptors are all {0,0}, so these four slots are confirmed no-handler passthroughs.
+        Evidence: qualified listing/decompile, selector-45 call stack/entry arguments, and runtime reads of init flag 0x02200920, source 0x020e7604, and table slots. Control flow and passthrough behavior confirmed for the supplied Japanese State.
+  data:
+    - name: BattleSpecialHandlerDescriptorTable
+      address:
+        jpn: 0x21FF9C0
+      length:
+        jpn: 0x218
+      description: |-
+        67 descriptors with 8-byte stride. Word 0 is direct function or virtual/member offset; word 1 encodes this adjustment and dispatch kind.
+        Slots 0, 46, 51, and 53 are initialized from main 0x020e7604. Runtime source and patched values are all {0,0}; these slots have no handler and return dispatcher argument 7 unchanged.
+    - name: PackedDamagePowerOverrideTable
+      address:
+        jpn: 0x21FF082
+      length:
+        jpn: 0x38
+      description: |-
+        Seven 8-byte records including sentinel. Lookup IDs 67, 68, 74, 102, 114, and 144 override power scaling thresholds in FUN_overlay_d_24__021e8458.

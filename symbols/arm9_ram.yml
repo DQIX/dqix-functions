@@ -743,6 +743,9 @@ main:
       description: |-
         Returns the player-data pointer owned by a battle actor.
         Confirmed in the battle spell-detail and MP-cost path.
+        Selector-handler static evidence additionally observes a u16 power array at player data +0x16C and a signed/current power-array index at player data +0x8B8.
+        The selected value is u16(playerData + 0x16C + 2 * s32(playerData + 0x8B8)).
+        The semantic mapping of each index to attack power, magical might, magical mending, or another stat still requires a controlled runtime value comparison.
         
         r0: battle actor
         return: [r0 + 0x144]
@@ -889,28 +892,31 @@ main:
         eur: 0x207435C
         usa: 0x207434C
       description: |-
-        Returns an IEEE 754 floating-point number less than 1 that depends on the current random number.
-        (0.555 etc.)
-        Multiplying this by 100 matches the percentage in the Hoimi table (although there is an error.)
-        Consumes one 64bit LCG (in the called function)
+        Updates the 64-bit LCG and converts its upper 32 bits to binary32.
+        The exact Japanese-ROM normalization is upper32 / 0xFFFFFFFF, so both 0.0 and 1.0 are possible.
+        The binary64 denominator is assembled as low word 0xFFE00000 and high word 0x41EFFFFF, which is exactly 4294967295.0.
+        Consumes one 64-bit LCG value through UpdateLCG.
+        Evidence: listing at main 0x020754D8 plus constant decoding; confidence confirmed for arithmetic.
         
         r0: BT or CT address
-        return: (float) [1, 0] (0.55555 etc)
+        return: binary32 in [0.0, 1.0], both endpoints inclusive
     - name: getFloatRandRange
       address:
         jpn: 0x2075514
         eur: 0x2074398
         usa: 0x2074388
       description: |-
-        Returns a random number of IEEE 754 floating-points between the IEEE 754 floating-points specified by argument 2 (maximum value) and argument 3 (minimum value).
-        Consumes one 64bit LCG. (in the called function.)
-        
-        CT addr, 0.5, 1.5 = 1.2 etc
+        Returns min + (max - min) * getFloatRand(context) using the game's binary32 helper calls.
+        Subtraction, multiplication, and addition are separate binary32 operations and must be rounded after each operation.
+        Both supplied endpoints are possible because getFloatRand returns the inclusive unit interval.
+        Consumes one 64-bit LCG value.
+        BattleEmulator mapping: lcg::floatRand is the closest existing method, but current branches divide by 4294967296.0 and evaluate the range in double. The ROM divides by 4294967295.0, converts to binary32, and evaluates the range with binary32 helpers, so the current emulator method is not bit-exact and excludes the upper endpoint.
+        Evidence: listing at main 0x02075514 and getFloatRand at main 0x020754D8; confidence confirmed for arithmetic.
         
         r0: BT or CT address
         r1: Minimum IEEE 754 floating-point number
         r2: Maximum IEEE 754 floating-point number
-        return: (float) [Minimum, Maximum], (0.55555 etc)
+        return: binary32 in [Minimum, Maximum], both endpoints inclusive when Minimum <= Maximum
     - name: getFloatRandWithPower
       address:
         jpn: 0x2075560
@@ -950,6 +956,31 @@ main:
         
         r0: IEEE 754 floating-point number
         return: (int) (input + 0.5)
+    - name: getNormalAttackBaseDamage
+      address:
+        jpn: 0x207564C
+      description: |-
+        Computes the binary32 normal-attack base damage before the caller's FloatToInt1 conversion.
+        Every division, subtraction, random range, and addition below is a separate binary32 helper operation.
+
+        center = (attack - defense / 2) / 2
+        threshold = attack / 16
+        if center <= 0: result = 0
+        else if center > threshold:
+          spread = center / 16
+          result = center + getFloatRandRange(context, -spread, spread) + getFloatRandRange(context, -1, 1)
+        else:
+          result = getFloatRandRange(context, 0, threshold)
+        return max(result, 0)
+
+        The high branch consumes two LCG values, the low positive branch consumes one, and the non-positive branch consumes none.
+        BattleEmulator mapping: BattleEmulator::FUN_0207564c is the corresponding approximation. FUN_021dbc04 is an HP/max-HP helper and is not this function.
+        Evidence: listing/decompile at main 0x0207564C and constants at main 0x02075770/0x02075774; arithmetic and RNG order supported by static evidence.
+
+        r0: attacker attack power, converted to binary32
+        r1: defender defense, converted to binary32
+        r2: BT or CT RNG context; when null, the ROM substitutes the global context at main 0x0207576C
+        return: non-negative binary32 base damage
     - name: ReadNARCHeader
       address:
         jpn: 0x2076378
@@ -1640,12 +1671,41 @@ main:
       address:
         jpn: 0x20F52B0
       length:
-        jpn: 0x878
+        jpn: 0x8BC
       description: |-
         Runtime player-data structure for party member 1 in the supplied Japanese battle state.
         The current battle actor resolves this pointer through battle actor +0x144 (getBattleActorPlayerData).
-        Confirmed fields include u16 +0x1c current HP, u16 +0x1e current MP, +0x488 equipment state, and ability flags through at least +0x874.
-        The length is the minimum observed span needed to include +0x874; it is not a confirmed complete structure size.
+        Confirmed fields include u16 +0x1c current HP and u16 +0x1e current MP. The embedded combat-stat block begins at player data +0x3c; battle actor +0x134 independently resolves the same address.
+        Supported selector-power fields are u16[] +0x16c and s32 +0x8b8, selected as u16(playerData + 0x16c + 2 * s32(playerData + 0x8b8)). Equipment state begins at +0x488 and observed ability flags extend through at least +0x874.
+        Party playerData allocations are physically spaced by 0x8cc: 0x020f384c, 0x020f4118, 0x020f49e4, 0x020f52b0. The user-facing cheat slot order maps these physical entries as slots 2,3,4,1 respectively.
+        The length is the minimum observed span needed to include the four-byte field at +0x8b8; it is not a confirmed complete structure size.
+    - name: SecondPartyMemberPlayerData
+      address:
+        jpn: 0x20F384C
+      length:
+        jpn: 0x8BC
+      description: |-
+        Runtime player-data allocation for cheat slot 2. It is an empty party slot in the supplied Gerunikku State: current HP/MP at +0x1c/+0x1e are 1/0.
+        Common layout: combatStats begins at +0x3c; listed/battle max HP, max MP, attack, defense, and speed candidate are at +0x6c,+0x6e,+0x70,+0x72,+0x74.
+        Physical allocation stride to the next playerData record is 0x8cc. The span is a minimum observed size, not a complete structure size.
+    - name: ThirdPartyMemberPlayerData
+      address:
+        jpn: 0x20F4118
+      length:
+        jpn: 0x8BC
+      description: |-
+        Runtime player-data allocation for cheat slot 3. It is an empty party slot in the supplied Gerunikku State: current HP/MP at +0x1c/+0x1e are 1/0.
+        Common layout: combatStats begins at +0x3c; listed/battle max HP, max MP, attack, defense, and speed candidate are at +0x6c,+0x6e,+0x70,+0x72,+0x74.
+        Physical allocation stride to the next playerData record is 0x8cc. The span is a minimum observed size, not a complete structure size.
+    - name: FourthPartyMemberPlayerData
+      address:
+        jpn: 0x20F49E4
+      length:
+        jpn: 0x8BC
+      description: |-
+        Runtime player-data allocation for cheat slot 4. It is an empty party slot in the supplied Gerunikku State: current HP/MP at +0x1c/+0x1e are 1/0.
+        Common layout: combatStats begins at +0x3c; listed/battle max HP, max MP, attack, defense, and speed candidate are at +0x6c,+0x6e,+0x70,+0x72,+0x74.
+        Physical allocation stride to cheat slot 1 at 0x020f52b0 is 0x8cc. The span is a minimum observed size, not a complete structure size.
     - name: FirstPartyMemberCurrentHpMp
       address:
         jpn: 0x20F52CC
@@ -1655,6 +1715,17 @@ main:
         Contiguous current HP/MP pair for party member 1 in the Japanese player-data structure.
         u16 +0x00 is current HP and u16 +0x02 is current MP.
         Runtime values in the supplied battle-start state were HP 297 and MP 155; casting ホイミ changed MP to 153.
+    - name: FirstPartyMemberCombatStats
+      address:
+        jpn: 0x20F52EC
+      length:
+        jpn: 0x3A
+      description: |-
+        Embedded combat-stat block for party member 1 in the supplied Japanese Gerunikku battle State.
+        The block begins at playerData +0x3c and is also the pointer stored at battleActor 0x022bbe04 +0x134.
+        Prior-art status cheats identify u16 +0x30/+0x32 as battle/listed max HP/MP fields; both equal current HP/MP 297/155 in this State even though the supplied out-of-battle display values are 301/161. Preserve this distinction until the field writer is resolved.
+        u16 +0x34 = 306 is confirmed as the live attacker-side offensive input consumed by selector 45 at overlay_d_24:021d9f5c. u16 +0x36 = 285 and u16 +0x38 = 184 remain semantic candidates.
+        The selector value 306 is battle-adjusted or otherwise distinct from the supplied status-screen attack value 308; do not expose +0x34 as an exact displayed-attack field without resolving its writer.
     - name: FirstPartyMemberCoupCharge
       address:
         jpn: 0x20F537F

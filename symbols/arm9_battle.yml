@@ -677,27 +677,43 @@ main:
       address:
         jpn: 0x22A4C7C
       length:
-        jpn: 0x4
+        jpn: 0x10
+      description: |-
+        Battle-runtime enemy record 0 head; current encounter identity is てっこうまじんA.
+        u16 +0x00 current HP, +0x02 current MP, +0x04 max HP, +0x06 max MP, +0x08 attack, +0x0a defense, +0x0c speed. Observed values: 402,10,402,10,161,256,98.
+        Enemy records use stride 0xa4: record(i) = 0x022a4c7c + i*0xa4 for the game's five-enemy capacity, i=0..4. The record is runtime/generated RAM outside the Ghidra-defined overlay-33 range, not confirmed overlay ROM data.
     - name: Enemys_MPHP_2
       address:
         jpn: 0x22A4D20
       length:
-        jpn: 0x4
+        jpn: 0x10
+      description: |-
+        Battle-runtime enemy record 1 head; current encounter identity is ゲルニック将軍.
+        u16 +0x00 current HP, +0x02 current MP, +0x04 max HP, +0x06 max MP, +0x08 attack, +0x0a defense, +0x0c speed. Observed values: 1854,255,1854,255,125,238,148.
+        Record stride is 0xa4. Layout and identity are confirmed by the supplied enemy-HP cheat, live memory, target order, and BattleEmulator values.
     - name: Enemys_MPHP_3
       address:
         jpn: 0x22A4DC4
       length:
-        jpn: 0x4
+        jpn: 0x10
+      description: |-
+        Battle-runtime enemy record 2 head; current encounter identity is てっこうまじんB.
+        u16 +0x00 current HP, +0x02 current MP, +0x04 max HP, +0x06 max MP, +0x08 attack, +0x0a defense, +0x0c speed. Observed values: 402,10,402,10,161,256,98.
+        Record stride is 0xa4. Layout and identity are confirmed by live memory, target order, and BattleEmulator values.
     - name: Enemys_MPHP_4
       address:
         jpn: 0x22A4E68
       length:
-        jpn: 0x4
+        jpn: 0x10
+      description: |-
+        Battle-runtime enemy record 3 head, derived from base 0x022a4c7c and stride 0xa4. No live enemy occupies this slot in the supplied encounter; identity and field contents are unknown.
     - name: Enemys_MPHP_5
       address:
         jpn: 0x22A4F0C
       length:
-        jpn: 0x4
+        jpn: 0x10
+      description: |-
+        Battle-runtime enemy record 4 head, derived from base 0x022a4c7c and stride 0xa4. No live enemy occupies this slot in the supplied encounter; identity and field contents are unknown.
     - name: Free_Camera_State_Location
       address:
         jpn: 0x238FBB0

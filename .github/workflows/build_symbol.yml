@@ -47,6 +47,7 @@ jobs:
         resymgen gen --sort --output-dir output/ram symbols/arm9_ram.yml
         resymgen gen --sort --output-dir output/overlay23 symbols/arm9_overlay23.yml
         resymgen gen --sort --output-dir output/overlay31 symbols/arm9_overlay31.yml
+        resymgen gen --sort --output-dir output/overlay24 symbols/arm9_overlay24.yml
     - name: zipping
       working-directory: dq9Functions
       run: |
